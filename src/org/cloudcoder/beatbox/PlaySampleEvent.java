@@ -4,7 +4,11 @@ import net.beadsproject.beads.data.Sample;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.SamplePlayer;
 
-public class PlaySampleEvent implements SequencerEvent {
+/**
+ * Implementation of {@link SequencerEvent} which plays a sample
+ * at a specified gain.
+ */
+public class PlaySampleEvent extends SimpleSequencerEvent {
 	private Sample sample;
 	private float gain;
 
