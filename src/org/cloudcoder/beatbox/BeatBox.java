@@ -38,17 +38,29 @@ public class BeatBox {
 		SequencerEvent kick = new PlaySampleEvent(Samples.KICK_1, 0.4f);
 		seq.repeat(0, kick);
 		seq.repeat(BPM/2, kick);
-		SequencerEvent clap1 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
-		SequencerEvent clap3 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
 		
-		seq.repeat(3, clap1);
-		seq.repeat(6, clap1);
-		seq.repeat(BPM/2+2, clap3);
-		seq.repeat(BPM/2+4, clap3);
+//		SequencerEvent clap1 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
+//		SequencerEvent clap3 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
+		
+//		seq.repeat(3, clap1);
+//		seq.repeat(6, clap1);
+//		seq.repeat(BPM/2+2, clap3);
+//		seq.repeat(BPM/2+4, clap3);
+		
+		
+		SequencerEvent hihat1 = new PlaySampleEvent(Samples.HIHAT_1, 0.4f);
+		
+//		seq.repeat(2, hihat1);
+//		seq.repeat(3, hihat1);
+//		seq.repeat(10, hihat1);
+//		seq.repeat(11, hihat1);
+		for (int i = 0; i < BPM; i += 2) {
+			seq.repeat(i, hihat1);
+		}
 	}
 	
 	public void play() {
-		Clock clock = new Clock(ac, 1000);
+		Clock clock = new Clock(ac, 1600);
 		Bead onTick = new OnTick();
 		clock.addMessageListener(onTick);
 		

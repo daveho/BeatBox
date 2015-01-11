@@ -10,6 +10,8 @@ public interface Samples {
 	public static String CLAP_1 = "CYCdh_ElecK06-Clap01.wav";
 	public static String CLAP_3 = "CYCdh_ElecK06-Clap03.wav";
 	
+	public static String HIHAT_1 = "75037__cbeeching__hat-04_16bit.wav";
+	
 	/**
 	 * Retrieve a sample.
 	 * 
