@@ -27,4 +27,9 @@ public class PlaySampleEvent extends SimpleSequencerEvent {
 		seq.getAc().out.addInput(g);
 		sp.start();
 	}
+	
+	@Override
+	public String toString() {
+		return "[" + sample.getFileName() + "]";
+	}
 }

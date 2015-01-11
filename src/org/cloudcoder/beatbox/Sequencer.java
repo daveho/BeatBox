@@ -9,8 +9,6 @@ import net.beadsproject.beads.core.AudioContext;
 
 /**
  * Sequencer: triggers {@link SequencerEvent}s (e.g., play a sound) when beats occur.
- * 
- * @author David Hovemeyer
  */
 public class Sequencer {
 	private AudioContext ac;
@@ -44,6 +42,7 @@ public class Sequencer {
 	 * @param evt the event
 	 */
 	public void atBeat(int beat, SequencerEvent evt) {
+		System.out.println("Schedule " + evt + " at " + beat);
 		addEvent(eventMap, beat, evt);
 	}
 
@@ -65,7 +64,11 @@ public class Sequencer {
 	public void tick(int beat) {
 		List<SequencerEvent> events = eventMap.get(beat);
 		if (events != null) {
-			events.forEach(e -> e.fire(this));
+			//events.forEach(e -> e.fire(this));
+			for (SequencerEvent evt : events) {
+				//System.out.println("Play " + evt + " at " + beat);
+				evt.fire(this);
+			}
 		}
 	}
 }
