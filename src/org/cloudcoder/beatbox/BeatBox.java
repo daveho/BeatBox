@@ -53,19 +53,21 @@ public class BeatBox extends Player {
 		return group(8, snare1, 14, snare1);
 	}
 	
-	private void addRhythm(int start) {
-		start *= BPM;
-		seq.atBeats(start+0, 12, BPM, kicks());
+	private int addRhythm(int m) {
+		int start = m*BPM;
+		seq.atBeats(start, 12, BPM, kicks());
 		seq.atBeats(start+4*BPM, 8, BPM, hihats());
 		seq.atBeats(start+4*BPM, 2, BPM, snare1());
 		seq.atBeats(start+6*BPM, 2, BPM, snare2());
 		seq.atBeats(start+8*BPM, 2, BPM, snare1());
 		seq.atBeats(start+10*BPM, 2, BPM, snare2());
+		return m+12;
 	}
 	
-	private void addRhythm2(int start) {
-		start *= BPM;
+	private int addRhythm2(int m) {
+		int start = m*BPM;
 		seq.atBeats(start+0, 4, BPM, kicks2());
+		return m+4;
 	}
 	
 	public static void main(String[] args) {
@@ -73,10 +75,11 @@ public class BeatBox extends Player {
 
 		int m = 0;
 		
-		beatBox.addRhythm(0);
-		beatBox.addRhythm2(12);
-		beatBox.addRhythm(16);
-		beatBox.addRhythm2(20);
+		m = beatBox.addRhythm2(m);
+		m = beatBox.addRhythm(m);
+		m = beatBox.addRhythm2(m);
+		m = beatBox.addRhythm(m);
+		m = beatBox.addRhythm2(m);
 		
 		beatBox.play();
 	}
