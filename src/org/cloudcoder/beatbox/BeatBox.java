@@ -57,6 +57,13 @@ public class BeatBox {
 				);
 	}
 	
+	private EventGroup kicks2() {
+		return group(
+				0, kick,
+				8, kick
+				);
+	}
+	
 	private EventGroup hihats() {
 		return group(
 				0, hihat1,
@@ -71,11 +78,15 @@ public class BeatBox {
 	}
 	
 	private EventGroup snare1() {
-		return group(12, snare1, 16, snare1);
+		return group(8, snare1, 12, snare1, 14, snare1);
+	}
+	
+	private EventGroup snare2() {
+		return group(8, snare1, 14, snare1);
 	}
 	
 	public void play() {
-		Clock clock = new Clock(ac, 1000);
+		Clock clock = new Clock(ac, 1100);
 		Bead onTick = new OnTick();
 		clock.addMessageListener(onTick);
 		
@@ -88,14 +99,30 @@ public class BeatBox {
 		ac.start();
 	}
 	
+	private void addRhythm(int start) {
+		start *= BPM;
+		seq.atBeats(start+0, 12, BPM, kicks());
+		seq.atBeats(start+4*BPM, 8, BPM, hihats());
+		seq.atBeats(start+4*BPM, 2, BPM, snare1());
+		seq.atBeats(start+6*BPM, 2, BPM, snare2());
+		seq.atBeats(start+8*BPM, 2, BPM, snare1());
+		seq.atBeats(start+10*BPM, 2, BPM, snare2());
+	}
+	
+	private void addRhythm2(int start) {
+		start *= BPM;
+		seq.atBeats(start+0, 4, BPM, kicks2());
+	}
+	
 	public static void main(String[] args) {
 		BeatBox beatBox = new BeatBox();
+
+		int m = 0;
 		
-		//beatBox.kicksAndClaps();
-		beatBox.seq.atBeats(0, 10, BPM, beatBox.kicks());
-		beatBox.seq.atBeats(2*BPM, 8, BPM, beatBox.hihats());
-		
-		beatBox.seq.atBeats(4*BPM, 6, BPM, beatBox.snare1());
+		beatBox.addRhythm(0);
+		beatBox.addRhythm2(12);
+		beatBox.addRhythm(16);
+		beatBox.addRhythm2(20);
 		
 		beatBox.play();
 	}
