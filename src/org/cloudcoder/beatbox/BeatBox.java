@@ -50,16 +50,24 @@ public class BeatBox {
 	}
 	
 	private EventGroup kicks() {
-		//return group(0, kick, BPM/2, kick);
-		return group(0, kick, 2, kick, 8, kick);
+		return group(
+				0, kick,
+				2, kick,
+				8, kick
+				);
 	}
 	
 	private EventGroup hihats() {
-		EventGroup g = new EventGroup();
-		for (int i = 0; i < BPM; i += BPM/8) {
-			g.addEvent(i, hihat1);
-		}
-		return g;
+		return group(
+				0, hihat1,
+				2, hihat1,
+				4, hihat1,
+				6, hihat1,
+				8, hihat1,
+				10, hihat1,
+				12, hihat1,
+				14, hihat1
+				);
 	}
 	
 	private EventGroup snare1() {
