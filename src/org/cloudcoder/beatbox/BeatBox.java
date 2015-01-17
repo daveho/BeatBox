@@ -78,19 +78,23 @@ public class BeatBox extends Player {
 		return group(11, clap1, 13, clap1);
 	}
 	
+//	private EventGroup claps2() {
+//		return group(10, clap1, 16, clap1);
+//	}
+	
 	private EventGroup boings1() {
 		return group(0, boing1);
 	}
 	
 	private int addRhythm(int m) {
 		int start = m*BPM;
-		seq.atBeats(start, 12, BPM, kicks());
-		seq.atBeats(start+4*BPM, 8, BPM, hihats());
+		seq.atBeats(start, 8, BPM, kicks());
+		seq.atBeats(start+0*BPM, 8, BPM, hihats());
+		seq.atBeats(start+0*BPM, 2, BPM, snare1());
+		seq.atBeats(start+2*BPM, 2, BPM, snare2());
 		seq.atBeats(start+4*BPM, 2, BPM, snare1());
 		seq.atBeats(start+6*BPM, 2, BPM, snare2());
-		seq.atBeats(start+8*BPM, 2, BPM, snare1());
-		seq.atBeats(start+10*BPM, 2, BPM, snare2());
-		return m+12;
+		return m+8;
 	}
 	
 	private int addBasicKicks(int m) {
@@ -99,16 +103,28 @@ public class BeatBox extends Player {
 		return m+4;
 	}
 	
+	private int addPairedKicks(int m) {
+		int start = m*BPM;
+		seq.atBeats(start+0, 4, BPM, kicks());
+		return m+4;
+	}
+	
+	private int addPairedKicksAndBoings(int m) {
+		int start = m*BPM;
+		seq.atBeats(start+0, 4, BPM, kicks());
+		seq.atBeats(start+0, 4, BPM, boings1());
+		return m+4;
+	}
+	
 	private int addRhythm3(int m) {
 		int start = m*BPM;
-		seq.atBeats(start, 12, BPM, kicks());
-		seq.atBeats(start, 4, BPM, boings1());
-		seq.atBeats(start+4*BPM, 8, BPM, hihats2());
+		seq.atBeats(start+0, 8, BPM, kicks());
+		seq.atBeats(start+0*BPM, 8, BPM, hihats2());
+		seq.atBeats(start+0*BPM, 2, BPM, snare1());
+		seq.atBeats(start+2*BPM, 2, BPM, snare2());
 		seq.atBeats(start+4*BPM, 2, BPM, snare1());
 		seq.atBeats(start+6*BPM, 2, BPM, snare2());
-		seq.atBeats(start+8*BPM, 2, BPM, snare1());
-		seq.atBeats(start+10*BPM, 2, BPM, snare2());
-		return m+12;
+		return m+8;
 	}
 
 	private int addBasicKicksAndClaps(int m) {
@@ -124,10 +140,16 @@ public class BeatBox extends Player {
 		int m = 0;
 		
 		m = beatBox.addBasicKicks(m);
+		m = beatBox.addPairedKicks(m);
 		m = beatBox.addRhythm(m);
 		m = beatBox.addBasicKicksAndClaps(m);
+		m = beatBox.addBasicKicksAndClaps(m);
 		m = beatBox.addRhythm3(m);
+		m = beatBox.addPairedKicksAndBoings(m);
+		m = beatBox.addBasicKicksAndClaps(m);
 		m = beatBox.addRhythm3(m);
+		
+		beatBox.recordToFile("beats.wav");
 		
 		beatBox.play();
 	}
