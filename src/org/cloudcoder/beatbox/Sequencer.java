@@ -11,10 +11,13 @@ import net.beadsproject.beads.core.AudioContext;
  * Sequencer: triggers {@link SequencerEvent}s (e.g., play a sound) when beats occur.
  */
 public class Sequencer {
+	private static final int DEFAULT_IDLE_SHUTDOWN_COUNT = 32;
 	private AudioContext ac;
+	private int idleShutdownCount;
 
 	/** Global event map: events that fire on a specific beat. */
 	private Map<Integer, List<SequencerEvent>> eventMap;
+	private int maxBeat;
 	
 	/**
 	 * Constructor.
@@ -23,7 +26,9 @@ public class Sequencer {
 	 */
 	public Sequencer(AudioContext ac) {
 		this.ac = ac;
+		this.idleShutdownCount = DEFAULT_IDLE_SHUTDOWN_COUNT;
 		this.eventMap = new HashMap<>();
+		this.maxBeat = 0;
 	}
 	
 	/**
@@ -33,6 +38,15 @@ public class Sequencer {
 	 */
 	public AudioContext getAc() {
 		return ac;
+	}
+	
+	/**
+	 * Set the sequencer to shut down after being idle for this many beats.
+	 * 
+	 * @param idleShutdownCount number of idle beats before shutting down
+	 */
+	public void setIdleShutdownCount(int idleShutdownCount) {
+		this.idleShutdownCount = idleShutdownCount;
 	}
 	
 	/**
@@ -50,6 +64,9 @@ public class Sequencer {
 		}
 		events.add(evt);
 		evt.onAdd(beat, this);
+		if (beat > maxBeat) {
+			maxBeat = beat;
+		}
 	}
 	
 	/**
@@ -82,6 +99,10 @@ public class Sequencer {
 				//System.out.println("Play " + evt + " at " + beat);
 				evt.fire(this);
 			}
+		}
+		if (beat > maxBeat + idleShutdownCount) {
+			System.out.println("Idle, shutting down");
+			ac.stop();
 		}
 	}
 }
