@@ -43,18 +43,15 @@ public class Sequencer {
 	 */
 	public void atBeat(int beat, SequencerEvent evt) {
 		System.out.println("Schedule " + evt + " at " + beat);
-		addEvent(eventMap, beat, evt);
-	}
-
-	private void addEvent(Map<Integer, List<SequencerEvent>> map, int beat, SequencerEvent evt) {
-		List<SequencerEvent> events = map.get(beat);
+		List<SequencerEvent> events = eventMap.get(beat);
 		if (events == null) {
 			events = new ArrayList<>();
-			map.put(beat, events);
+			eventMap.put(beat, events);
 		}
 		events.add(evt);
+		evt.onAdd(beat, this);
 	}
-	
+
 	/**
 	 * This method should be called when beats occur:
 	 * appropriate {@link SequencerEvent}s will be fired.

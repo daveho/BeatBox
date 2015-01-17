@@ -36,16 +36,16 @@ public class EventGroup implements SequencerEvent {
 	}
 
 	@Override
-	public void schedule(int beat, Sequencer seq) {
-		// Schedule all of the items at their offset from the base beat
+	public void onAdd(int beat, Sequencer seq) {
+		// Add all of the items at their offset from the base beat
 		for (Item item : itemList) {
-			item.evt.schedule(beat + item.offset, seq);
+			seq.atBeat(beat + item.offset, item.evt);
 		}
 	}
 
 	@Override
 	public void fire(Sequencer seq) {
-		throw new IllegalStateException("EventGroups should not be fired, only scheduled");
+		// Do nothing
 	}
 
 	/**

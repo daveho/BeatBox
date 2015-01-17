@@ -61,13 +61,13 @@ public class BeatBox {
 	
 	public void addKicks() {
 		for (int i = 0; i < 10; i++) {
-			kicks().schedule(i*BPM, seq);
+			seq.atBeat(i*BPM, kicks());
 		}
 	}
 	
 	public void addHihats() {
 		for (int i = 2; i < 10; i++) {
-			hihats().schedule(i*BPM, seq);
+			seq.atBeat(i*BPM, hihats());
 		}
 	}
 	

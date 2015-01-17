@@ -1,13 +1,12 @@
 package org.cloudcoder.beatbox;
 
 /**
- * Abstract base class for "simple" {@link SequencerEvent}s
- * which simply schedule themselves to be fired at a particular
- * beat.
+ * Abstract base class for "simple" {@link SequencerEvent}s,
+ * which have a no-op implementation of {@link SequencerEvent#onAdd(int, Sequencer)}.
  */
 public abstract class SimpleSequencerEvent implements SequencerEvent {
 	@Override
-	public void schedule(int beat, Sequencer seq) {
-		seq.atBeat(beat, this);
+	public void onAdd(int beat, Sequencer seq) {
+		// Do nothing
 	}
 }
