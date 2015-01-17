@@ -51,6 +51,22 @@ public class Sequencer {
 		events.add(evt);
 		evt.onAdd(beat, this);
 	}
+	
+	/**
+	 * Add an event to fire starting at specified beat,
+	 * repeating a specified number of times, and skipping a
+	 * specified number of beats between occurrences.
+	 * 
+	 * @param start    the start beat
+	 * @param howmany  how many times the event should fire
+	 * @param skip     number of beats to skip between occurrences
+	 * @param evt      the event
+	 */
+	public void atBeats(int start, int howmany, int skip, SequencerEvent evt) {
+		for (int i = 0; i < howmany; i++) {
+			atBeat(start + i*skip, evt);
+		}
+	}
 
 	/**
 	 * This method should be called when beats occur:

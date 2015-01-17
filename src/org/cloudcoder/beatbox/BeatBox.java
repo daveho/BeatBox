@@ -44,7 +44,7 @@ public class BeatBox {
 		seq = new Sequencer(ac);
 		Samples.loadAll();
 		kick = new PlaySampleEvent(Samples.KICK_1, 0.4f);
-		hihat1 = new PlaySampleEvent(Samples.HIHAT_1, 0.4f);
+		hihat1 = new PlaySampleEvent(Samples.HIHAT_1, 0.3f);
 	}
 	
 	private EventGroup kicks() {
@@ -57,18 +57,6 @@ public class BeatBox {
 			g.addEvent(i, hihat1);
 		}
 		return g;
-	}
-	
-	public void addKicks() {
-		for (int i = 0; i < 10; i++) {
-			seq.atBeat(i*BPM, kicks());
-		}
-	}
-	
-	public void addHihats() {
-		for (int i = 2; i < 10; i++) {
-			seq.atBeat(i*BPM, hihats());
-		}
 	}
 	
 	public void play() {
@@ -89,8 +77,8 @@ public class BeatBox {
 		BeatBox beatBox = new BeatBox();
 		
 		//beatBox.kicksAndClaps();
-		beatBox.addKicks();
-		beatBox.addHihats();
+		beatBox.seq.atBeats(0, 10, BeatBox.BPM, beatBox.kicks());
+		beatBox.seq.atBeats(2*BeatBox.BPM, 8, BeatBox.BPM, beatBox.hihats());
 		
 		beatBox.play();
 	}
