@@ -9,6 +9,9 @@ public class BeatBox extends Player {
 	private PlaySampleEvent hihat1;
 	private PlaySampleEvent hihat2;
 	private PlaySampleEvent snare1;
+	private PlaySampleEvent tom1;
+	private PlaySampleEvent clap1;
+	private PlaySampleEvent boing1;
 	
 	public BeatBox() {
 		super(BPM);
@@ -17,6 +20,9 @@ public class BeatBox extends Player {
 		hihat1 = new PlaySampleEvent(Samples.HIHAT_1, 0.3f);
 		hihat2 = new PlaySampleEvent(Samples.HIHAT_2, 0.3f);
 		snare1 = new PlaySampleEvent(Samples.SNARE_1, 0.5f);
+		tom1 = new PlaySampleEvent(Samples.TOM_1, 0.3f);
+		clap1 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
+		boing1 = new PlaySampleEvent(Samples.BOING_1, 0.4f);
 	}
 	
 	private EventGroup kicks() {
@@ -68,6 +74,14 @@ public class BeatBox extends Player {
 		return group(8, snare1, 14, snare1);
 	}
 	
+	private EventGroup claps1() {
+		return group(11, clap1, 13, clap1);
+	}
+	
+	private EventGroup boings1() {
+		return group(0, boing1);
+	}
+	
 	private int addRhythm(int m) {
 		int start = m*BPM;
 		seq.atBeats(start, 12, BPM, kicks());
@@ -88,12 +102,20 @@ public class BeatBox extends Player {
 	private int addRhythm3(int m) {
 		int start = m*BPM;
 		seq.atBeats(start, 12, BPM, kicks());
+		seq.atBeats(start, 4, BPM, boings1());
 		seq.atBeats(start+4*BPM, 8, BPM, hihats2());
 		seq.atBeats(start+4*BPM, 2, BPM, snare1());
 		seq.atBeats(start+6*BPM, 2, BPM, snare2());
 		seq.atBeats(start+8*BPM, 2, BPM, snare1());
 		seq.atBeats(start+10*BPM, 2, BPM, snare2());
 		return m+12;
+	}
+
+	private int addBasicKicksAndClaps(int m) {
+		int start = m*BPM;
+		seq.atBeats(start+0, 4, BPM, kicks2());
+		seq.atBeats(start+1, 4, BPM, claps1());
+		return m+4;
 	}
 	
 	public static void main(String[] args) {
@@ -103,7 +125,8 @@ public class BeatBox extends Player {
 		
 		m = beatBox.addBasicKicks(m);
 		m = beatBox.addRhythm(m);
-		m = beatBox.addBasicKicks(m);
+		m = beatBox.addBasicKicksAndClaps(m);
+		m = beatBox.addRhythm3(m);
 		m = beatBox.addRhythm3(m);
 		
 		beatBox.play();

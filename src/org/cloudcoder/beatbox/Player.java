@@ -1,8 +1,12 @@
 package org.cloudcoder.beatbox;
 
+import java.io.File;
+import java.io.IOException;
+
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
 import net.beadsproject.beads.ugens.Clock;
+import net.beadsproject.beads.ugens.RecordToFile;
 
 public abstract class Player {
 	private class OnTick extends Bead {
@@ -33,11 +37,22 @@ public abstract class Player {
 	protected final AudioContext ac;
 	protected final Sequencer seq;
 	protected final int bpm;
+	private RecordToFile rtf;
 
 	public Player(int bpm) {
 		this.bpm = bpm;
 		this.ac = new AudioContext();
 		this.seq = new Sequencer(ac);
+	}
+
+	public void recordToFile(String fileName) {
+		try {
+			this.rtf = new RecordToFile(ac, 2, new File(fileName));
+		} catch (IOException e) {
+			throw new RuntimeException("Error recording to file", e);
+		}
+		rtf.addInput(ac.out);
+		ac.out.addDependent(rtf);
 	}
 
 	public void play() {
@@ -50,6 +65,7 @@ public abstract class Player {
 		clock.setTicksPerBeat(bpm);
 		
 		ac.out.addDependent(clock);
+		
 		
 		ac.start();
 	}

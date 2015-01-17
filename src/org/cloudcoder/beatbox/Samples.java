@@ -10,6 +10,9 @@ public interface Samples {
 	public static String HIHAT_1 = "75037__cbeeching__hat-04_16bit.wav";
 	public static String HIHAT_2 = "802__bdu__closehatac.wav";
 	public static String SNARE_1 = "209887__veiler__hi-snare.wav";
+	public static String TOM_1 = "183109__dwsd__prc-phat909roomtom_16bit.wav";
+	public static String CLAP_1 = "239906__jamesabdulrahman__fat-clap.wav";
+	public static String BOING_1 = "146264__setuniman__boing-0h-16m.wav";
 	
 	/**
 	 * Retrieve a sample.
