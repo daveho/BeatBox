@@ -68,4 +68,16 @@ public class EventGroup implements SequencerEvent {
 		}
 		return result;
 	}
+	
+	/**
+	 * Create an {@link EventGroup} that fires the given event twice
+	 * on the given beat.  Doubled samples are louder!
+	 * 
+	 * @param beat the beat when the doubled event should be fired
+	 * @param evt  the event
+	 * @return the {@link EventGroup}
+	 */
+	public static EventGroup times2(int beat, SequencerEvent evt) {
+		return group(beat, evt, beat, evt);
+	}
 }
