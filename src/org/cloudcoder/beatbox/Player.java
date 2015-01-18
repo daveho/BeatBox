@@ -37,10 +37,12 @@ public abstract class Player {
 	protected final AudioContext ac;
 	protected final Sequencer seq;
 	protected final int bpm;
+	protected final float measureLenMs;
 	private RecordToFile rtf;
 
-	public Player(int bpm) {
+	public Player(int bpm, float measureLenMs) {
 		this.bpm = bpm;
+		this.measureLenMs = measureLenMs;
 		this.ac = new AudioContext();
 		this.seq = new Sequencer(ac);
 	}
@@ -56,7 +58,7 @@ public abstract class Player {
 	}
 
 	public void play() {
-		Clock clock = new Clock(ac, 1100);
+		Clock clock = new Clock(ac, measureLenMs);
 		Bead onTick = new OnTick();
 		clock.addMessageListener(onTick);
 		
