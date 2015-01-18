@@ -14,6 +14,8 @@ public interface Samples {
 	public static String TOM_1 = "183109__dwsd__prc-phat909roomtom_16bit.wav";
 	public static String CLAP_1 = "239906__jamesabdulrahman__fat-clap.wav";
 	public static String BOING_1 = "146264__setuniman__boing-0h-16m.wav";
+	public static String COWBELL_1 = "99766__menegass__cow.wav";
+	public static String COWBELL_2 = "159766__timgormly__cowbell-os-4.wav";
 	
 	/**
 	 * Retrieve a sample.

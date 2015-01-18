@@ -13,6 +13,9 @@ public class BeatBox extends Player {
 	private PlaySampleEvent tom1;
 	private PlaySampleEvent clap1;
 	private PlaySampleEvent boing1;
+	private PlaySampleEvent cowbell1;
+	private PlaySampleEvent cowbell2;
+	private PlaySampleEvent cowbell2_loud;
 	
 	public BeatBox() {
 		super(BPM);
@@ -25,6 +28,9 @@ public class BeatBox extends Player {
 		tom1 = new PlaySampleEvent(Samples.TOM_1, 0.3f);
 		clap1 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
 		boing1 = new PlaySampleEvent(Samples.BOING_1, 0.4f);
+		cowbell1 = new PlaySampleEvent(Samples.COWBELL_1, 0.15f);
+		cowbell2 = new PlaySampleEvent(Samples.COWBELL_2, 0.25f);
+		cowbell2_loud = new PlaySampleEvent(Samples.COWBELL_2, 0.9f);
 	}
 	
 	// paired kicks
@@ -79,15 +85,23 @@ public class BeatBox extends Player {
 	}
 	
 	private EventGroup claps1() {
-		return group(11, clap1, 13, clap1);
+		return group(12, clap1, 14, clap1);
 	}
 	
-//	private EventGroup claps2() {
+//	private EventGroup claps2() {3
 //		return group(10, clap1, 16, clap1);
 //	}
 	
 	private EventGroup boings1() {
 		return group(0, boing1);
+	}
+	
+	private EventGroup cowbells1() {
+		return group(8, cowbell1, 10, cowbell1, 12, cowbell2);
+	}
+	
+	private EventGroup cowbells2() {
+		return group(4, cowbell2, 12, cowbell2_loud);
 	}
 	
 	private int addRhythm(int m) {
@@ -116,7 +130,8 @@ public class BeatBox extends Player {
 	private int addPairedKicksAndBoings(int m) {
 		int start = m*BPM;
 		seq.atBeats(start+0, 4, BPM, kicks());
-		seq.atBeats(start+0, 4, BPM, boings1());
+//		seq.atBeats(start+0, 4, BPM, boings1());
+		seq.atBeat(start+0, boings1());
 		return m+4;
 	}
 	
@@ -134,7 +149,18 @@ public class BeatBox extends Player {
 	private int addBasicKicksAndClaps(int m) {
 		int start = m*BPM;
 		seq.atBeats(start+0, 4, BPM, kicks2());
-		seq.atBeats(start+1, 4, BPM, claps1());
+		seq.atBeats(start+0, 4, BPM, claps1());
+		return m+4;
+	}
+
+	private int addBasicKicksAndClapsWithCowbell(int m) {
+		int start = m*BPM;
+		seq.atBeats(start+0, 4, BPM, kicks2());
+		seq.atBeats(start+0, 4, BPM, claps1());
+		seq.atBeat(start+0, cowbells1());
+		seq.atBeat(start+1*BPM, cowbells2());
+		seq.atBeat(start+2*BPM, cowbells1());
+		seq.atBeat(start+3*BPM, cowbells2());
 		return m+4;
 	}
 	
@@ -143,17 +169,23 @@ public class BeatBox extends Player {
 
 		int m = 0;
 		
+		boolean b = true;
+		
+		if (b){
 		m = beatBox.addBasicKicks(m);
 		m = beatBox.addPairedKicks(m);
 		m = beatBox.addRhythm(m);
 		m = beatBox.addBasicKicksAndClaps(m);
-		m = beatBox.addBasicKicksAndClaps(m);
+		}
+		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
+		if(b){
 		m = beatBox.addRhythm3(m);
 		m = beatBox.addPairedKicksAndBoings(m);
 		m = beatBox.addBasicKicksAndClaps(m);
+		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
 		m = beatBox.addRhythm3(m);
-		
-		beatBox.recordToFile("beats.wav");
+		}
+//		beatBox.recordToFile("beats.wav");
 		
 		beatBox.play();
 	}
