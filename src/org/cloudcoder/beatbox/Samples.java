@@ -7,6 +7,7 @@ import net.beadsproject.beads.data.SampleManager;
 
 public interface Samples {
 	public static String KICK_1 = "175961__fawkes027__analogish-kick-001.wav";
+	public static String KICK_2 = "175962__fawkes027__analogish-kick-002.wav";
 	public static String HIHAT_1 = "75037__cbeeching__hat-04_16bit.wav";
 	public static String HIHAT_2 = "802__bdu__closehatac.wav";
 	public static String SNARE_1 = "209887__veiler__hi-snare.wav";

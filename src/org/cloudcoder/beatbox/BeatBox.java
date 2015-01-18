@@ -6,6 +6,7 @@ public class BeatBox extends Player {
 	static final int BPM = 16;
 
 	private PlaySampleEvent kick;
+	private PlaySampleEvent kick2;
 	private PlaySampleEvent hihat1;
 	private PlaySampleEvent hihat2;
 	private PlaySampleEvent snare1;
@@ -17,6 +18,7 @@ public class BeatBox extends Player {
 		super(BPM);
 		Samples.loadAll();
 		kick = new PlaySampleEvent(Samples.KICK_1, 0.4f);
+		kick2 = new PlaySampleEvent(Samples.KICK_2, 0.4f);
 		hihat1 = new PlaySampleEvent(Samples.HIHAT_1, 0.3f);
 		hihat2 = new PlaySampleEvent(Samples.HIHAT_2, 0.3f);
 		snare1 = new PlaySampleEvent(Samples.SNARE_1, 0.5f);
@@ -25,14 +27,16 @@ public class BeatBox extends Player {
 		boing1 = new PlaySampleEvent(Samples.BOING_1, 0.4f);
 	}
 	
+	// paired kicks
 	private EventGroup kicks() {
 		return group(
-				0, kick,
-				2, kick,
+				0, kick2,
+				2, kick2,
 				8, kick
 				);
 	}
 	
+	// basic kicks
 	private EventGroup kicks2() {
 		return group(
 				0, kick,
