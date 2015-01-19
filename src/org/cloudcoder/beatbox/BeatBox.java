@@ -17,12 +17,15 @@ public class BeatBox extends Player {
 	PlaySampleEvent hihat2;
 	PlaySampleEvent hihat3;
 	PlaySampleEvent snare1;
+	PlaySampleEvent snare2;
+	PlaySampleEvent snare2_loud;
 	PlaySampleEvent tom1;
 	PlaySampleEvent clap1;
 	PlaySampleEvent boing1;
 	PlaySampleEvent cowbell1;
 	PlaySampleEvent cowbell2;
 	PlaySampleEvent cowbell2_loud;
+	PlaySampleEvent cymbal1;
 	
 	EventGroup g_kicks;
 	EventGroup g_kicks2;
@@ -48,12 +51,15 @@ public class BeatBox extends Player {
 		hihat2 = new PlaySampleEvent(Samples.HIHAT_2, 0.3f);
 		hihat3 = new PlaySampleEvent(Samples.HIHAT_3, 0.4f);
 		snare1 = new PlaySampleEvent(Samples.SNARE_1, 0.5f);
+		snare2 = new PlaySampleEvent(Samples.SNARE_2, 0.2f);
+		snare2_loud = new PlaySampleEvent(Samples.SNARE_2, 0.9f);
 		tom1 = new PlaySampleEvent(Samples.TOM_1, 0.3f);
 		clap1 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
 		boing1 = new PlaySampleEvent(Samples.BOING_1, 0.4f);
 		cowbell1 = new PlaySampleEvent(Samples.COWBELL_1, 0.15f);
 		cowbell2 = new PlaySampleEvent(Samples.COWBELL_2, 0.25f);
 		cowbell2_loud = new PlaySampleEvent(Samples.COWBELL_2, 0.9f);
+		cymbal1 = new PlaySampleEvent(Samples.CYMBAL_1, 0.3f);
 		
 		// Event groups
 		g_kicks = group(0, kick2, 2, kick2, 8, kick); // paired kicks
@@ -79,14 +85,15 @@ public class BeatBox extends Player {
 				14, hihat2
 				);
 		g_hihats3 = group(
-				0, hihat3,
+				0, hihat2,
 				2, hihat3,
-				3, hihat3,
+//				3, hihat2,
 				4, hihat3,
-				6, hihat3,
-				8, hihat3,
-				10, hihat3,
-				12, hihat3,
+//				6, hihat2,
+				8, hihat1,
+				9, hihat3,
+				10, cymbal1,
+//				12, hihat3,
 				14, hihat3
 				);
 		g_snare1 = group(8, snare1, 12, snare1, 14, snare1);
@@ -165,6 +172,25 @@ public class BeatBox extends Player {
 		seq.atBeats(0, start+2*BPM, 1, BPM, g_hihats3);
 		return m+4;
 	}
+
+	int addRhythm4(int m) {
+		int start = m*BPM;
+		seq.atBeats(0, start+0, 4, BPM, g_kicks);
+		seq.atBeats(0, start+0*BPM, 4, BPM, g_hihats3);
+		seq.atBeats(0, start+0*BPM, 2, BPM, g_snare1);
+		seq.atBeats(0, start+2*BPM, 2, BPM, g_snare2);
+//		seq.atBeats(0, start+4*BPM, 2, BPM, g_snare1);
+//		seq.atBeats(0, start+6*BPM, 2, BPM, g_snare2);
+		return m+4;
+	}
+	
+	int addRhythm5(int m) {
+		int start = m*BPM;
+		addRhythm4(m);
+		seq.atBeats(0, start+0*BPM, 2, BPM*2, group(4, snare2, 10, snare2_loud, 12, snare2_loud));
+		seq.atBeats(0, start+3*BPM, 1, 0, group());
+		return m+8;
+	}
 	
 	public void addEvents() {
 		int m = 0;
@@ -178,7 +204,8 @@ public class BeatBox extends Player {
 //		m = addBasicKicksAndClaps(m);
 //		m = addRhythm3(m);
 		m = addBasicKicksAndFastHihats(m);
-
+		m = addRhythm4(m);
+		m = addRhythm5(m);
 	}
 	
 	public static void main(String[] args) {
