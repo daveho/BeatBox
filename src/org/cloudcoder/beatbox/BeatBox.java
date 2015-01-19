@@ -1,12 +1,15 @@
 package org.cloudcoder.beatbox;
 
 import static org.cloudcoder.beatbox.EventGroup.group;
+import net.beadsproject.beads.ugens.Reverb;
 
 public class BeatBox extends Player {
 	static final int BPM = 16;
 	static final float MEASURE_LEN_MS = 1100.0f;
 	static final float BEAT_LEN_MS = MEASURE_LEN_MS / BPM;
 	static final int NUM_TRACKS = 1;
+	
+//	Reverb reverb;
 
 	PlaySampleEvent kick;
 	PlaySampleEvent kick2;
@@ -32,6 +35,9 @@ public class BeatBox extends Player {
 	public BeatBox() {
 		super(BPM, MEASURE_LEN_MS, NUM_TRACKS);
 		Samples.loadAll();
+		
+//		reverb = new Reverb(seq.getDesk().getAc());
+//		seq.getDesk().setTrack(0, reverb);
 		
 		// Sample events
 		kick = new PlaySampleEvent(Samples.KICK_1, 0.4f);
