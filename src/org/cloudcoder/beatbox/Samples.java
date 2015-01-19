@@ -13,7 +13,9 @@ public interface Samples {
 	public static String HIHAT_3 = "137690__quartertone__hh13inkz-blsc-v03_16bit.wav";
 	public static String SNARE_1 = "209887__veiler__hi-snare.wav";
 	public static String SNARE_2 = "165208__rhythmpeople__rpeople-snare2.wav";
+	public static String SNARE_3 = "104241__minorr__snare-pearl-masters-14-x5-f.wav";
 	public static String TOM_1 = "183109__dwsd__prc-phat909roomtom_16bit.wav";
+	public static String TOM_2 = "261449__veiler__dw-tom-1.wav";
 	public static String CLAP_1 = "239906__jamesabdulrahman__fat-clap.wav";
 	public static String BOING_1 = "146264__setuniman__boing-0h-16m.wav";
 	public static String COWBELL_1 = "99766__menegass__cow.wav";

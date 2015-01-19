@@ -20,6 +20,7 @@ public class BeatBox extends Player {
 	PlaySampleEvent snare2;
 	PlaySampleEvent snare2_loud;
 	PlaySampleEvent tom1;
+	PlaySampleEvent tom2;
 	PlaySampleEvent clap1;
 	PlaySampleEvent boing1;
 	PlaySampleEvent cowbell1;
@@ -54,6 +55,7 @@ public class BeatBox extends Player {
 		snare2 = new PlaySampleEvent(Samples.SNARE_2, 0.2f);
 		snare2_loud = new PlaySampleEvent(Samples.SNARE_2, 0.9f);
 		tom1 = new PlaySampleEvent(Samples.TOM_1, 0.3f);
+		tom2 = new PlaySampleEvent(Samples.TOM_2, 0.9f);
 		clap1 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
 		boing1 = new PlaySampleEvent(Samples.BOING_1, 0.4f);
 		cowbell1 = new PlaySampleEvent(Samples.COWBELL_1, 0.15f);
@@ -188,24 +190,32 @@ public class BeatBox extends Player {
 		int start = m*BPM;
 		addRhythm4(m);
 		seq.atBeats(0, start+0*BPM, 2, BPM*2, group(4, snare2, 10, snare2_loud, 12, snare2_loud));
-		seq.atBeats(0, start+3*BPM, 1, 0, group());
-		return m+8;
+		return m+4;
 	}
-	
+
+	int addRhythm6(int m) {
+		int start = m*BPM;
+		addRhythm4(m);
+		seq.atBeats(0, start+0*BPM, 1, BPM, group(4, snare2, 10, snare2_loud, 12, snare2_loud));
+		seq.atBeats(0, start+3*BPM, 1, 0, group(4, snare2, 8, snare2_loud, 12, tom2));
+		return m+2;
+	}
+
 	public void addEvents() {
 		int m = 0;
 		
-//		m = addBasicKicks(m);
-//		m = addPairedKicks(m);
-//		m = addRhythm(m);
-//		m = addBasicKicksAndClaps(m);
-//		m = addRhythm3(m);
-//		m = addPairedKicksAndBoings(m);
-//		m = addBasicKicksAndClaps(m);
-//		m = addRhythm3(m);
+		m = addBasicKicks(m);
+		m = addPairedKicks(m);
+		m = addRhythm(m);
+		m = addBasicKicksAndClaps(m);
+		m = addRhythm3(m);
+		m = addPairedKicksAndBoings(m);
+		m = addBasicKicksAndClaps(m);
+		m = addRhythm3(m);
 		m = addBasicKicksAndFastHihats(m);
 		m = addRhythm4(m);
 		m = addRhythm5(m);
+		m = addRhythm6(m);
 	}
 	
 	public static void main(String[] args) {
