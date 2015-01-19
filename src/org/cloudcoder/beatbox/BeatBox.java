@@ -190,11 +190,11 @@ public class BeatBox extends Player {
 		m = beatBox.addPairedKicks(m);
 		m = beatBox.addRhythm(m);
 		m = beatBox.addBasicKicksAndClaps(m);
-		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
+//		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
 		m = beatBox.addRhythm3(m);
 		m = beatBox.addPairedKicksAndBoings(m);
 		m = beatBox.addBasicKicksAndClaps(m);
-		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
+//		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
 		m = beatBox.addRhythm3(m);
 
 //		beatBox.recordToFile("beats.wav");
