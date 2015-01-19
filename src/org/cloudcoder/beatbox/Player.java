@@ -8,7 +8,10 @@ import net.beadsproject.beads.core.Bead;
 import net.beadsproject.beads.ugens.Clock;
 import net.beadsproject.beads.ugens.RecordToFile;
 
-public abstract class Player {
+/**
+ * Play music using a {@link Sequencer}.
+ */
+public class Player {
 	private class OnTick extends Bead {
 		// We wait a bit before actually playing
 		boolean playing = false;
@@ -34,19 +37,38 @@ public abstract class Player {
 		}
 	}
 
+	/** The AudioContext. */
 	protected final AudioContext ac;
+	/** The {@link Desk}. */
+	protected final Desk desk;
+	/** The {@link Sequencer}. */
 	protected final Sequencer seq;
+	/** Number of beats per measure. */
 	protected final int bpm;
+	/** Length of a measure in milliseconds. */
 	protected final float measureLenMs;
 	private RecordToFile rtf;
 
-	public Player(int bpm, float measureLenMs) {
+	/**
+	 * Constructor.
+	 * 
+	 * @param bpm           number of beats per measure
+	 * @param measureLenMs  length of one measure in milliseconds
+	 * @param numTracks     number of tracks
+	 */
+	public Player(int bpm, float measureLenMs, int numTracks) {
 		this.bpm = bpm;
 		this.measureLenMs = measureLenMs;
 		this.ac = new AudioContext();
-		this.seq = new Sequencer(ac);
+		this.desk = new Desk(ac, numTracks);
+		this.seq = new Sequencer(desk);
 	}
 
+	/**
+	 * Record audio to named file.
+	 * 
+	 * @param fileName name of file were audio should be recorded.
+	 */
 	public void recordToFile(String fileName) {
 		try {
 			this.rtf = new RecordToFile(ac, 2, new File(fileName));
@@ -57,6 +79,10 @@ public abstract class Player {
 		ac.out.addDependent(rtf);
 	}
 
+	/**
+	 * Play audio as specified by the events added
+	 * to the {@link Sequencer}.
+	 */
 	public void play() {
 		Clock clock = new Clock(ac, measureLenMs);
 		Bead onTick = new OnTick();

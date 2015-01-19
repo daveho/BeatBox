@@ -6,11 +6,21 @@ import net.beadsproject.beads.ugens.DelayTrigger;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.WavePlayer;
 
-public class PlaySquareWaveEvent implements SequencerEvent {
+/**
+ * Play a square wave with given frequency and duration.
+ */
+public class PlaySquareWaveEvent extends SimpleSequencerEvent {
 	private float durationMs;
 	private float freq;
 	private float gain;
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param durationMs duration in milliseconds
+	 * @param freq       frequency
+	 * @param gain       gain
+	 */
 	public PlaySquareWaveEvent(float durationMs, float freq, float gain) {
 		this.durationMs = durationMs;
 		this.freq = freq;
@@ -18,30 +28,25 @@ public class PlaySquareWaveEvent implements SequencerEvent {
 	}
 
 	@Override
-	public void onAdd(int beat, Sequencer seq) {
-		// Nothing to do
-	}
-
-	@Override
-	public void fire(Sequencer seq) {
+	public void fire(Sequencer seq, int trackIndex) {
 		
-		final WavePlayer wp = new WavePlayer(seq.getAc(), freq, Buffer.SQUARE);
+		final WavePlayer wp = new WavePlayer(seq.getDesk().getAc(), freq, Buffer.SQUARE);
 		
-		Gain g = new Gain(seq.getAc(), 1, gain);
+		Gain g = new Gain(seq.getDesk().getAc(), 1, gain);
 		g.addInput(wp);
 
-		seq.getAc().out.addInput(g);
+		seq.getDesk().getTrack(trackIndex).addInput(g);
 		
 		wp.start();
 		
 		// Schedule a trigger to generate the end event
-		DelayTrigger trigger = new DelayTrigger(seq.getAc(), durationMs, new Bead() {
+		DelayTrigger trigger = new DelayTrigger(seq.getDesk().getAc(), durationMs, new Bead() {
 			@Override
 			protected void messageReceived(Bead message) {
 				wp.kill();
 			}
 		});
-		seq.getAc().out.addDependent(trigger);
+		seq.getDesk().getAc().out.addDependent(trigger);
 	}
 
 }

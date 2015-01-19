@@ -5,7 +5,8 @@ import static org.cloudcoder.beatbox.EventGroup.group;
 public class BeatBox extends Player {
 	static final int BPM = 16;
 	static final float MEASURE_LEN_MS = 1100.0f;
-	static final float BEAT_LEN = MEASURE_LEN_MS / BPM;
+	static final float BEAT_LEN_MS = MEASURE_LEN_MS / BPM;
+	static final int NUM_TRACKS = 1;
 
 	private PlaySampleEvent kick;
 	private PlaySampleEvent kick2;
@@ -20,7 +21,7 @@ public class BeatBox extends Player {
 	private PlaySampleEvent cowbell2_loud;
 	
 	public BeatBox() {
-		super(BPM, MEASURE_LEN_MS);
+		super(BPM, MEASURE_LEN_MS, NUM_TRACKS);
 		Samples.loadAll();
 		kick = new PlaySampleEvent(Samples.KICK_1, 0.4f);
 		kick2 = new PlaySampleEvent(Samples.KICK_2, 0.4f);
@@ -90,7 +91,7 @@ public class BeatBox extends Player {
 		return group(12, clap1, 14, clap1);
 	}
 	
-//	private EventGroup claps2() {3
+//	private EventGroup claps2() {
 //		return group(10, clap1, 16, clap1);
 //	}
 	
@@ -107,76 +108,76 @@ public class BeatBox extends Player {
 	}
 	
 	private SequencerEvent oneBeatSquareWave(float freq) {
-		return new PlaySquareWaveEvent(BEAT_LEN, freq, 0.1f);
+		return new PlaySquareWaveEvent(BEAT_LEN_MS, freq, 0.1f);
 	}
 	
 	private int addRhythm(int m) {
 		int start = m*BPM;
-		seq.atBeats(start, 8, BPM, kicks());
-		seq.atBeats(start+0*BPM, 8, BPM, hihats());
-		seq.atBeats(start+0*BPM, 2, BPM, snare1());
-		seq.atBeats(start+2*BPM, 2, BPM, snare2());
-		seq.atBeats(start+4*BPM, 2, BPM, snare1());
-		seq.atBeats(start+6*BPM, 2, BPM, snare2());
+		seq.atBeats(0, start, 8, BPM, kicks());
+		seq.atBeats(0, start+0*BPM, 8, BPM, hihats());
+		seq.atBeats(0, start+0*BPM, 2, BPM, snare1());
+		seq.atBeats(0, start+2*BPM, 2, BPM, snare2());
+		seq.atBeats(0, start+4*BPM, 2, BPM, snare1());
+		seq.atBeats(0, start+6*BPM, 2, BPM, snare2());
 		return m+8;
 	}
 	
 	private int addBasicKicks(int m) {
 		int start = m*BPM;
-		seq.atBeats(start+0, 4, BPM, kicks2());
+		seq.atBeats(0, start+0, 4, BPM, kicks2());
 		return m+4;
 	}
 	
 	private int addPairedKicks(int m) {
 		int start = m*BPM;
-		seq.atBeats(start+0, 4, BPM, kicks());
+		seq.atBeats(0, start+0, 4, BPM, kicks());
 		return m+4;
 	}
 	
 	private int addPairedKicksAndBoings(int m) {
 		int start = m*BPM;
-		seq.atBeats(start+0, 4, BPM, kicks());
-//		seq.atBeats(start+0, 4, BPM, boings1());
-		seq.atBeat(start+0, boings1());
+		seq.atBeats(0, start+0, 4, BPM, kicks());
+//		seq.atBeats(0, start+0, 4, BPM, boings1());
+		seq.atBeat(0, start+0, boings1());
 		return m+4;
 	}
 	
 	private int addRhythm3(int m) {
 		int start = m*BPM;
-		seq.atBeats(start+0, 8, BPM, kicks());
-		seq.atBeats(start+0*BPM, 8, BPM, hihats2());
-		seq.atBeats(start+0*BPM, 2, BPM, snare1());
-		seq.atBeats(start+2*BPM, 2, BPM, snare2());
-		seq.atBeats(start+4*BPM, 2, BPM, snare1());
-		seq.atBeats(start+6*BPM, 2, BPM, snare2());
+		seq.atBeats(0, start+0, 8, BPM, kicks());
+		seq.atBeats(0, start+0*BPM, 8, BPM, hihats2());
+		seq.atBeats(0, start+0*BPM, 2, BPM, snare1());
+		seq.atBeats(0, start+2*BPM, 2, BPM, snare2());
+		seq.atBeats(0, start+4*BPM, 2, BPM, snare1());
+		seq.atBeats(0, start+6*BPM, 2, BPM, snare2());
 		return m+8;
 	}
 
 	private int addBasicKicksAndClaps(int m) {
 		int start = m*BPM;
-		seq.atBeats(start+0, 4, BPM, kicks2());
-		seq.atBeats(start+0, 4, BPM, claps1());
+		seq.atBeats(0, start+0, 4, BPM, kicks2());
+		seq.atBeats(0, start+0, 4, BPM, claps1());
 		return m+4;
 	}
 
 	private int addBasicKicksAndClapsWithCowbell(int m) {
 		int start = m*BPM;
-		seq.atBeats(start+0, 4, BPM, kicks2());
-		seq.atBeats(start+0, 4, BPM, claps1());
-		seq.atBeat(start+0, cowbells1());
-		seq.atBeat(start+1*BPM, cowbells2());
-		seq.atBeat(start+2*BPM, cowbells1());
-		seq.atBeat(start+3*BPM, cowbells2());
+		seq.atBeats(0, start+0, 4, BPM, kicks2());
+		seq.atBeats(0, start+0, 4, BPM, claps1());
+		seq.atBeat(0, start+0, cowbells1());
+		seq.atBeat(0, start+1*BPM, cowbells2());
+		seq.atBeat(0, start+2*BPM, cowbells1());
+		seq.atBeat(0, start+3*BPM, cowbells2());
 		return m+4;
 	}
 	
 	private int addSquareWavePattern(int m) {
 		int start = m*BPM;
-		seq.atBeats(start+0, 4, BPM, kicks2());
-		seq.atBeats(start+4, 4, BPM, oneBeatSquareWave(440.0f));
-		seq.atBeats(start+6, 4, BPM, oneBeatSquareWave(440.0f));
-		seq.atBeats(start+12, 4, BPM, oneBeatSquareWave(440.0f));
-		seq.atBeats(start+14, 4, BPM, oneBeatSquareWave(440.0f));
+		seq.atBeats(0, start+0, 4, BPM, kicks2());
+		seq.atBeats(0, start+4, 4, BPM, oneBeatSquareWave(440.0f));
+		seq.atBeats(0, start+6, 4, BPM, oneBeatSquareWave(440.0f));
+		seq.atBeats(0, start+12, 4, BPM, oneBeatSquareWave(440.0f));
+		seq.atBeats(0, start+14, 4, BPM, oneBeatSquareWave(440.0f));
 		return m+4;
 	}
 	
@@ -185,17 +186,16 @@ public class BeatBox extends Player {
 
 		int m = 0;
 		
-//		m = beatBox.addBasicKicks(m);
-//		m = beatBox.addPairedKicks(m);
-//		m = beatBox.addRhythm(m);
-//		m = beatBox.addBasicKicksAndClaps(m);
-//		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
-//		m = beatBox.addRhythm3(m);
-//		m = beatBox.addPairedKicksAndBoings(m);
-//		m = beatBox.addBasicKicksAndClaps(m);
-//		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
-//		m = beatBox.addRhythm3(m);
-		m = beatBox.addSquareWavePattern(m);
+		m = beatBox.addBasicKicks(m);
+		m = beatBox.addPairedKicks(m);
+		m = beatBox.addRhythm(m);
+		m = beatBox.addBasicKicksAndClaps(m);
+		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
+		m = beatBox.addRhythm3(m);
+		m = beatBox.addPairedKicksAndBoings(m);
+		m = beatBox.addBasicKicksAndClaps(m);
+		m = beatBox.addBasicKicksAndClapsWithCowbell(m);
+		m = beatBox.addRhythm3(m);
 
 //		beatBox.recordToFile("beats.wav");
 		

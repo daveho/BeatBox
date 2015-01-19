@@ -6,7 +6,7 @@ package org.cloudcoder.beatbox;
  */
 public abstract class SimpleSequencerEvent implements SequencerEvent {
 	@Override
-	public void onAdd(int beat, Sequencer seq) {
+	public void onAdd(int trackIndex, int beat, Sequencer seq) {
 		// Do nothing
 	}
 }

@@ -36,15 +36,15 @@ public class EventGroup implements SequencerEvent {
 	}
 
 	@Override
-	public void onAdd(int beat, Sequencer seq) {
+	public void onAdd(int trackIndex, int beat, Sequencer seq) {
 		// Add all of the items at their offset from the base beat
 		for (Item item : itemList) {
-			seq.atBeat(beat + item.offset, item.evt);
+			seq.atBeat(trackIndex, beat + item.offset, item.evt);
 		}
 	}
 
 	@Override
-	public void fire(Sequencer seq) {
+	public void fire(Sequencer seq, int trackIndex) {
 		// Do nothing
 	}
 
@@ -67,17 +67,5 @@ public class EventGroup implements SequencerEvent {
 			result.addEvent(offset, evt);
 		}
 		return result;
-	}
-	
-	/**
-	 * Create an {@link EventGroup} that fires the given event twice
-	 * on the given beat.  Doubled samples are louder!
-	 * 
-	 * @param beat the beat when the doubled event should be fired
-	 * @param evt  the event
-	 * @return the {@link EventGroup}
-	 */
-	public static EventGroup times2(int beat, SequencerEvent evt) {
-		return group(beat, evt, beat, evt);
 	}
 }

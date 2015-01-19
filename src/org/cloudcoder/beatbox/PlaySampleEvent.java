@@ -18,13 +18,13 @@ public class PlaySampleEvent extends SimpleSequencerEvent {
 	}
 
 	@Override
-	public void fire(Sequencer seq) {
-		Gain g = new Gain(seq.getAc(), 1, gain);
-		SamplePlayer sp = new SamplePlayer(seq.getAc(), sample);
+	public void fire(Sequencer seq, int trackIndex) {
+		Gain g = new Gain(seq.getDesk().getAc(), 1, gain);
+		SamplePlayer sp = new SamplePlayer(seq.getDesk().getAc(), sample);
 		sp.setKillOnEnd(true);
 		g.addInput(sp);
 		sp.setToLoopStart();
-		seq.getAc().out.addInput(g);
+		seq.getDesk().getTrack(trackIndex).addInput(g);
 		sp.start();
 	}
 	
