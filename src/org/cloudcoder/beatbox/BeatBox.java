@@ -15,6 +15,7 @@ public class BeatBox extends Player {
 	PlaySampleEvent kick2;
 	PlaySampleEvent hihat1;
 	PlaySampleEvent hihat2;
+	PlaySampleEvent hihat3;
 	PlaySampleEvent snare1;
 	PlaySampleEvent tom1;
 	PlaySampleEvent clap1;
@@ -27,6 +28,7 @@ public class BeatBox extends Player {
 	EventGroup g_kicks2;
 	EventGroup g_hihats;
 	EventGroup g_hihats2;
+	EventGroup g_hihats3;
 	EventGroup g_snare1;
 	EventGroup g_snare2;
 	EventGroup g_claps1;
@@ -44,6 +46,7 @@ public class BeatBox extends Player {
 		kick2 = new PlaySampleEvent(Samples.KICK_2, 0.4f);
 		hihat1 = new PlaySampleEvent(Samples.HIHAT_1, 0.3f);
 		hihat2 = new PlaySampleEvent(Samples.HIHAT_2, 0.3f);
+		hihat3 = new PlaySampleEvent(Samples.HIHAT_3, 0.4f);
 		snare1 = new PlaySampleEvent(Samples.SNARE_1, 0.5f);
 		tom1 = new PlaySampleEvent(Samples.TOM_1, 0.3f);
 		clap1 = new PlaySampleEvent(Samples.CLAP_1, 0.4f);
@@ -74,6 +77,17 @@ public class BeatBox extends Player {
 				10, hihat2,
 				12, hihat1,
 				14, hihat2
+				);
+		g_hihats3 = group(
+				0, hihat3,
+				2, hihat3,
+				3, hihat3,
+				4, hihat3,
+				6, hihat3,
+				8, hihat3,
+				10, hihat3,
+				12, hihat3,
+				14, hihat3
 				);
 		g_snare1 = group(8, snare1, 12, snare1, 14, snare1);
 		g_snare2 = group(8, snare1, 14, snare1);
@@ -144,19 +158,26 @@ public class BeatBox extends Player {
 		return m+4;
 	}
 	
+	int addBasicKicksAndFastHihats(int m) {
+		int start = m*BPM;
+		seq.atBeats(0, start+0, 4, BPM, g_kicks2);
+		seq.atBeats(0, start+0*BPM, 1, BPM, g_hihats3);
+		seq.atBeats(0, start+2*BPM, 1, BPM, g_hihats3);
+		return m+4;
+	}
+	
 	public void addEvents() {
 		int m = 0;
 		
-		m = addBasicKicks(m);
-		m = addPairedKicks(m);
-		m = addRhythm(m);
-		m = addBasicKicksAndClaps(m);
-//		m = addBasicKicksAndClapsWithCowbell(m);
-		m = addRhythm3(m);
-		m = addPairedKicksAndBoings(m);
-		m = addBasicKicksAndClaps(m);
-//		m = addBasicKicksAndClapsWithCowbell(m);
-		m = addRhythm3(m);
+//		m = addBasicKicks(m);
+//		m = addPairedKicks(m);
+//		m = addRhythm(m);
+//		m = addBasicKicksAndClaps(m);
+//		m = addRhythm3(m);
+//		m = addPairedKicksAndBoings(m);
+//		m = addBasicKicksAndClaps(m);
+//		m = addRhythm3(m);
+		m = addBasicKicksAndFastHihats(m);
 
 	}
 	
