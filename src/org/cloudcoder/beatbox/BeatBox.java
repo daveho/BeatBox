@@ -196,8 +196,9 @@ public class BeatBox extends Player {
 	int addRhythm6(int m) {
 		int start = m*BPM;
 		addRhythm4(m);
-		seq.atBeats(0, start+0*BPM, 1, BPM, group(4, snare2, 10, snare2_loud, 12, snare2_loud));
-		seq.atBeats(0, start+3*BPM, 1, 0, group(4, snare2, 8, snare2_loud, 12, tom2));
+		seq.atBeats(0, start+0*BPM, 2, BPM, group(4, snare2, 10, snare2_loud, 12, snare2_loud));
+		seq.atBeats(0, start+2*BPM, 1, 0, group(0, snare1, 4, snare2_loud, 8, snare1, 12, snare2_loud));
+		seq.atBeats(0, start+3*BPM, 1, 0, group(8, snare2_loud, 10, snare2_loud, 12, tom2));
 		return m+2;
 	}
 
@@ -210,7 +211,7 @@ public class BeatBox extends Player {
 		m = addBasicKicksAndClaps(m);
 		m = addRhythm3(m);
 		m = addPairedKicksAndBoings(m);
-		m = addBasicKicksAndClaps(m);
+//		m = addBasicKicksAndClaps(m);
 		m = addRhythm3(m);
 		m = addBasicKicksAndFastHihats(m);
 		m = addRhythm4(m);
