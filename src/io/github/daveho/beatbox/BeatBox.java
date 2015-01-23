@@ -1,6 +1,7 @@
 package io.github.daveho.beatbox;
 
 import static io.github.daveho.beatbox.EventGroup.group;
+import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.Reverb;
 
 public class BeatBox extends Player {
@@ -9,8 +10,6 @@ public class BeatBox extends Player {
 	static final float BEAT_LEN_MS = MEASURE_LEN_MS / BPM;
 	static final int NUM_TRACKS = 1;
 	
-//	Reverb reverb;
-
 	PlaySampleEvent kick;
 	PlaySampleEvent kick2;
 	PlaySampleEvent hihat1;
@@ -42,8 +41,17 @@ public class BeatBox extends Player {
 		super(BPM, MEASURE_LEN_MS, NUM_TRACKS);
 		Samples.loadAll();
 		
-//		reverb = new Reverb(seq.getDesk().getAc());
-//		seq.getDesk().setTrack(0, reverb);
+		// Track 0 feeds into the reverb splitter, which
+		// feeds into both the AudioContext's output (implicitly,
+		// via the call to setTrack), and the reverb's output
+		// (which in turn is fed into the AudioContext's
+		// output).  So, the eventual output is a mix of both
+		// the wet and dry signals.
+		Gain reverbSplit = new Gain(seq.getDesk().getAc(), 1);
+		Reverb reverb = new Reverb(seq.getDesk().getAc());
+		reverb.addInput(reverbSplit);
+		seq.getDesk().setTrack(0, reverbSplit);
+		seq.getDesk().getAc().out.addInput(reverb);
 		
 		// Sample events
 		kick = new PlaySampleEvent(Samples.KICK_1, 0.4f);
