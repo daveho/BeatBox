@@ -9,7 +9,7 @@ import javax.sound.midi.Transmitter;
 
 public class CaptureMidiEvents {
 	
-	public static void getMidiInput(Receiver receiver) throws MidiUnavailableException {
+	public static MidiDevice getMidiInput(Receiver receiver) throws MidiUnavailableException {
 		
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		for (MidiDevice.Info info : infos) {
@@ -24,7 +24,7 @@ public class CaptureMidiEvents {
 				Transmitter transmitter = device.getTransmitter();
 				transmitter.setReceiver(receiver);
 				device.open();
-				return;
+				return device;
 			}
 		}
 		
@@ -35,7 +35,16 @@ public class CaptureMidiEvents {
 
 		@Override
 		public void send(MidiMessage message, long timeStamp) {
-			System.out.println("Recieved MidiMessage@" + timeStamp + ", status=" + message.getStatus());
+			int status = message.getStatus();
+			System.out.println("Recieved MidiMessage@" + timeStamp + ", status=" + status);
+			if (status == 144) {
+				byte[] data = message.getMessage();
+				int note = data[1];
+				int velocity = data[2];
+				System.out.printf("note=%d, velocity=%d\n", note, velocity);
+			} else if (status == 128) {
+				
+			}
 		}
 
 		@Override

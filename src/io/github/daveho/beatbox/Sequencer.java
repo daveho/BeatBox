@@ -27,6 +27,9 @@ public class Sequencer {
 	private Map<Integer, List<ScheduledEvent>> eventMap;
 	private int maxBeat;
 	
+	// Shutdown hook
+	private Runnable shutdownHook;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -112,6 +115,19 @@ public class Sequencer {
 		if (beat > maxBeat + idleShutdownCount) {
 			System.out.println("Idle, shutting down");
 			desk.getAc().stop();
+			if (shutdownHook != null) {
+				shutdownHook.run();
+			}
 		}
+	}
+	
+	/**
+	 * Set a hook to be run when the sequencer shuts down
+	 * (i.e., because there are no more events to be fired.)
+	 * 
+	 * @param shutdownHook the shutdown hook
+	 */
+	public void setShutdownHook(Runnable shutdownHook) {
+		this.shutdownHook = shutdownHook;
 	}
 }

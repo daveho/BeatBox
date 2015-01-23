@@ -5,6 +5,7 @@ import static io.github.daveho.beatbox.EventGroup.group;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -250,8 +251,10 @@ public class BeatBox extends Player {
 					int velocity = data[2]; // unused for now
 					
 					float freq = Pitch.mtof(note);
+					
+					float gain = (velocity/128.0f) * 0.2f;
 
-					PlayLiveSquareWave player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, 0.2f, desk.getTrack(0));
+					PlayLiveSquareWave player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
 					pitchMap.put(note, player);
 					
 					player.start();
@@ -274,7 +277,16 @@ public class BeatBox extends Player {
 			}
 		};
 		
-		CaptureMidiEvents.getMidiInput(receiver);
+		final MidiDevice device = CaptureMidiEvents.getMidiInput(receiver);
+		
+		seq.setShutdownHook(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("Sequencer shutting down, close midi device");
+				receiver.close();
+				device.close();
+			}
+		});
 	}
 	
 	public static void main(String[] args) throws MidiUnavailableException {
