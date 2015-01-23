@@ -1,4 +1,4 @@
-package org.cloudcoder.beatbox;
+package io.github.daveho.beatbox;
 
 /**
  * Abstract base class for "simple" {@link SequencerEvent}s,

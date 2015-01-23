@@ -1,6 +1,6 @@
-package org.cloudcoder.beatbox;
+package io.github.daveho.beatbox;
 
-import static org.cloudcoder.beatbox.EventGroup.group;
+import static io.github.daveho.beatbox.EventGroup.group;
 import net.beadsproject.beads.ugens.Reverb;
 
 public class BeatBox extends Player {

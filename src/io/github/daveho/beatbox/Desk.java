@@ -1,4 +1,4 @@
-package org.cloudcoder.beatbox;
+package io.github.daveho.beatbox;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.UGen;

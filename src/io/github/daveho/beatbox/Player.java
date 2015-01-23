@@ -1,4 +1,4 @@
-package org.cloudcoder.beatbox;
+package io.github.daveho.beatbox;
 
 import java.io.File;
 import java.io.IOException;
