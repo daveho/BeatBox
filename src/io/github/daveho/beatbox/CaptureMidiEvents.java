@@ -35,7 +35,7 @@ public class CaptureMidiEvents {
 
 		@Override
 		public void send(MidiMessage message, long timeStamp) {
-			System.out.println("Recieved MidiMessage@" + timeStamp);
+			System.out.println("Recieved MidiMessage@" + timeStamp + ", status=" + message.getStatus());
 		}
 
 		@Override

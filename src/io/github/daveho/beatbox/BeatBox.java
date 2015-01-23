@@ -1,6 +1,16 @@
 package io.github.daveho.beatbox;
 
 import static io.github.daveho.beatbox.EventGroup.group;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+
+import net.beadsproject.beads.core.UGen;
+import net.beadsproject.beads.data.Pitch;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.Reverb;
 
@@ -227,10 +237,51 @@ public class BeatBox extends Player {
 		m = addRhythm6(m);
 	}
 	
-	public static void main(String[] args) {
+	public void liveSynth() throws MidiUnavailableException {
+		final Map<Integer, PlayLiveSquareWave> pitchMap = new HashMap<>();
+		
+		Receiver receiver = new Receiver() {
+			@Override
+			public void send(MidiMessage message, long timeStamp) {
+				byte[] data = message.getMessage();
+				if (message.getStatus() == 144) {
+					// Key down
+					int note = data[1];
+					int velocity = data[2]; // unused for now
+					
+					float freq = Pitch.mtof(note);
+
+					PlayLiveSquareWave player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, 0.2f, desk.getTrack(0));
+					pitchMap.put(note, player);
+					
+					player.start();
+				} else if (message.getStatus() == 128) {
+					// Key up
+					int note = data[1];
+					PlayLiveSquareWave player = pitchMap.get(note);
+					if (player != null) {
+						player.stop();
+						pitchMap.remove(note);
+					}
+				}
+			}
+			
+			@Override
+			public void close() {
+				for (PlayLiveSquareWave player : pitchMap.values()) {
+					player.stop();
+				}
+			}
+		};
+		
+		CaptureMidiEvents.getMidiInput(receiver);
+	}
+	
+	public static void main(String[] args) throws MidiUnavailableException {
 		BeatBox beatBox = new BeatBox();
 
 		beatBox.addEvents();
+		beatBox.liveSynth();
 
 //		beatBox.recordToFile("beats.wav");
 		
