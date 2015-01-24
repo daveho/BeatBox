@@ -59,6 +59,11 @@ public class BeatBox extends Player {
 		// the wet and dry signals.
 		Gain reverbSplit = new Gain(seq.getDesk().getAc(), 1);
 		Reverb reverb = new Reverb(seq.getDesk().getAc());
+		
+//		reverb.setDamping(.4f);
+		reverb.setEarlyReflectionsLevel(.5f);
+		reverb.setLateReverbLevel(.1f);
+		
 		reverb.addInput(reverbSplit);
 		seq.getDesk().setTrack(0, reverbSplit);
 		seq.getDesk().getAc().out.addInput(reverb);
