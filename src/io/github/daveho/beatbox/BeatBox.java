@@ -239,7 +239,7 @@ public class BeatBox extends Player {
 	}
 	
 	public void liveSynth() throws MidiUnavailableException {
-		final Map<Integer, PlayLiveSquareWave> pitchMap = new HashMap<>();
+		final Map<Integer, PlayLive> noteMap = new HashMap<>();
 		
 		Receiver receiver = new Receiver() {
 			@Override
@@ -252,26 +252,27 @@ public class BeatBox extends Player {
 					
 					float freq = Pitch.mtof(note);
 					
-					float gain = (velocity/128.0f) * 0.2f;
+					float gain = (velocity/128.0f) * 0.15f;
 
-					PlayLiveSquareWave player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
-					pitchMap.put(note, player);
+					PlayLive player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
+//					PlayLive player = new PlayLiveTriangleWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
+					noteMap.put(note, player);
 					
 					player.start();
 				} else if (message.getStatus() == 128) {
 					// Key up
 					int note = data[1];
-					PlayLiveSquareWave player = pitchMap.get(note);
+					PlayLive player = noteMap.get(note);
 					if (player != null) {
 						player.stop();
-						pitchMap.remove(note);
+						noteMap.remove(note);
 					}
 				}
 			}
 			
 			@Override
 			public void close() {
-				for (PlayLiveSquareWave player : pitchMap.values()) {
+				for (PlayLive player : noteMap.values()) {
 					player.stop();
 				}
 			}
