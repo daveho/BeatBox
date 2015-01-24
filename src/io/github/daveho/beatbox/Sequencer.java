@@ -27,8 +27,9 @@ public class Sequencer {
 	private Map<Integer, List<ScheduledEvent>> eventMap;
 	private int maxBeat;
 	
-	// Shutdown hook
-	private Runnable shutdownHook;
+	// Shutdown hooks
+//	private Runnable shutdownHook;
+	private List<Runnable> shutdownHooks;
 	
 	/**
 	 * Constructor.
@@ -40,6 +41,7 @@ public class Sequencer {
 		this.idleShutdownCount = DEFAULT_IDLE_SHUTDOWN_COUNT;
 		this.eventMap = new HashMap<>();
 		this.maxBeat = 0;
+		this.shutdownHooks = new ArrayList<>();
 	}
 	
 	/**
@@ -115,19 +117,20 @@ public class Sequencer {
 		if (beat > maxBeat + idleShutdownCount) {
 			System.out.println("Idle, shutting down");
 			desk.getAc().stop();
-			if (shutdownHook != null) {
-				shutdownHook.run();
+			// Run shutdown hooks
+			for (Runnable h : shutdownHooks) {
+				h.run();
 			}
 		}
 	}
 	
 	/**
-	 * Set a hook to be run when the sequencer shuts down
+	 * Add a hook to be run when the sequencer shuts down
 	 * (i.e., because there are no more events to be fired.)
 	 * 
-	 * @param shutdownHook the shutdown hook
+	 * @param shutdownHook the shutdown hook to add
 	 */
-	public void setShutdownHook(Runnable shutdownHook) {
-		this.shutdownHook = shutdownHook;
+	public void addShutdownHook(Runnable shutdownHook) {
+		this.shutdownHooks.add(shutdownHook);
 	}
 }

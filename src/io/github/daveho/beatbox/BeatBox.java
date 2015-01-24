@@ -10,7 +10,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 
-import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.data.Pitch;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.Reverb;
@@ -280,7 +279,7 @@ public class BeatBox extends Player {
 		
 		final MidiDevice device = CaptureMidiEvents.getMidiInput(receiver);
 		
-		seq.setShutdownHook(new Runnable() {
+		seq.addShutdownHook(new Runnable() {
 			@Override
 			public void run() {
 				System.out.println("Sequencer shutting down, close midi device");
