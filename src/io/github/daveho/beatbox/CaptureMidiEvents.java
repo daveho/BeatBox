@@ -7,10 +7,20 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
+/**
+ * Support for capturing midi input events.
+ */
 public class CaptureMidiEvents {
-	
+	/**
+	 * Capture midi input events, dispatching them to given Receiver.
+	 * The MidiDevice returned is the device providing the input, and
+	 * should be closed when input events are no longer needed.
+	 * 
+	 * @param receiver the Receiver to which midi input events should be dispatched
+	 * @return the MidiDevice providing the input events
+	 * @throws MidiUnavailableException if midi input can't be found
+	 */
 	public static MidiDevice getMidiInput(Receiver receiver) throws MidiUnavailableException {
-		
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		for (MidiDevice.Info info : infos) {
 			MidiDevice device;
@@ -31,6 +41,7 @@ public class CaptureMidiEvents {
 		throw new MidiUnavailableException("Could not find any midi input sources");
 	}
 	
+	// Just for testing
 	static class MyReceiver implements Receiver {
 
 		@Override
@@ -53,6 +64,7 @@ public class CaptureMidiEvents {
 		}
 	}
 	
+	// Just for testing
 	public static void main(String[] args) throws MidiUnavailableException {
 		getMidiInput(new MyReceiver());
 		
