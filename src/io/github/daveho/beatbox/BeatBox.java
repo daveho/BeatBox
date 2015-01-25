@@ -243,49 +243,17 @@ public class BeatBox extends Player {
 	}
 	
 	public void liveSynth() throws MidiUnavailableException {
-		final Map<Integer, PlayLive> noteMap = new HashMap<>();
-		
-		final InputEventListener listener = new InputEventListener() {
-			@Override
-			public void onInputEvent(InputEvent inputEvent) {
-				System.out.println("Input event received!");
-				
-				PlayLive player;
-				
-				switch (inputEvent.getType()) {
-				case KEY_DOWN:
-					float freq = Pitch.mtof(inputEvent.getNote());
-					float gain = (inputEvent.getVelocity()/128.0f) * 0.15f;
-					player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
-					noteMap.put(inputEvent.getNote(), player);
-					player.start();
-					break;
-					
-				case KEY_UP:
-					player = noteMap.get(inputEvent.getNote());
-					if (player != null) {
-						player.stop();
-						noteMap.remove(inputEvent.getNote());
-					}
-					break;
-					
-				default:
-					System.out.println("Unknown input event type? " + inputEvent.getType());
-				}
-			}
-		};
+		SquareWavePolySynth synth = new SquareWavePolySynth(seq);
 		
 		MidiInputEventReceiver r = MidiInputEventReceiver.create();
-		r.addListener(listener);
+		r.addListener(synth);
 		
 		seq.addShutdownHook(new Runnable() {
 			@Override
 			public void run() {
 				System.out.println("Sequencer shutting down, close midi device");
 				r.close();
-				for (PlayLive p : noteMap.values()) {
-					p.stop();
-				}
+				synth.close();
 			}
 		});
 	}
