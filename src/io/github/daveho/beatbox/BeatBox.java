@@ -2,15 +2,8 @@ package io.github.daveho.beatbox;
 
 import static io.github.daveho.beatbox.EventGroup.group;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
 
-import net.beadsproject.beads.data.Pitch;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.Reverb;
 
@@ -242,11 +235,28 @@ public class BeatBox extends Player {
 		m = addRhythm6(m);
 	}
 	
-	public void liveSynth() throws MidiUnavailableException {
+	public void liveSynth(boolean record) throws MidiUnavailableException {
 		SquareWavePolySynth synth = new SquareWavePolySynth(seq);
 		
 		MidiInputEventReceiver r = MidiInputEventReceiver.create();
-		r.addListener(synth);
+		
+		if (record) {
+			final RecordInputEventsListener recorder = new RecordInputEventsListener(seq);
+			recorder.setDelegate(synth);
+			r.addListener(recorder);
+			
+			seq.addShutdownHook(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("Recorded input events:");
+					for (RecordedInputEvent rec : recorder.getRecordedEvents()) {
+						System.out.println(rec.toString());
+					}
+				}
+			});
+		} else {
+			r.addListener(synth);
+		}
 		
 		seq.addShutdownHook(new Runnable() {
 			@Override
@@ -262,7 +272,7 @@ public class BeatBox extends Player {
 		BeatBox beatBox = new BeatBox();
 
 		beatBox.addEvents();
-		beatBox.liveSynth();
+		beatBox.liveSynth(true);
 
 //		beatBox.recordToFile("beats.wav");
 		
