@@ -217,6 +217,14 @@ public class BeatBox extends Player {
 		seq.atBeats(0, start+3*BPM, 1, 0, group(8, snare2_loud, 10, snare2_loud, 12, tom2));
 		return m+2;
 	}
+	
+	int addTicks(int m) {
+		int start = m*BPM;
+		for (int i = 0; i < 4; i++) {
+			seq.atBeats(0, start+i*BPM, 1, 0, group(0, hihat3, 4, hihat3, 8, hihat3, 12, hihat3));
+		}
+		return m+4;
+	}
 
 	public void addEvents() {
 		int m = 0;
@@ -272,6 +280,13 @@ public class BeatBox extends Player {
 		BeatBox beatBox = new BeatBox();
 
 		beatBox.addEvents();
+		
+//		int m = 0;
+//		m = beatBox.addTicks(m);
+//		m = beatBox.addTicks(m);
+//		m = beatBox.addTicks(m);
+//		m = beatBox.addTicks(m);
+		
 		beatBox.liveSynth(true);
 
 //		beatBox.recordToFile("beats.wav");

@@ -41,8 +41,10 @@ public class RecordInputEventsListener implements InputEventListener {
 	public void onInputEvent(InputEvent inputEvent) {
 		long nano = System.nanoTime();
 		SequencerBeat seqBeat = seq.getSequencerBeat();
-		long nanoOffset = nano - seqBeat.getNano();
-		recordedEvents.add(new RecordedInputEvent(inputEvent, seqBeat.getBeat(), nanoOffset));
+		if (seqBeat != null) {
+			long nanoOffset = nano - seqBeat.getNano();
+			recordedEvents.add(new RecordedInputEvent(inputEvent, seqBeat.getBeat(), nanoOffset));
+		}
 		if (delegate != null) {
 			delegate.onInputEvent(inputEvent);
 		}
