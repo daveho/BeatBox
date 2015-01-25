@@ -8,9 +8,9 @@ import java.util.Map;
  * play notes in response.  Each in-progress note is represented
  * by a {@live PlayLive} object.
  */
-public abstract class AbstractPolySynth implements InputEventListener {
+public abstract class AbstractPolySynth<PlayerType extends PlayLive> implements InputEventListener {
 	protected final Sequencer seq;
-	private final Map<Integer, PlayLive> noteMap;
+	private final Map<Integer, PlayerType> noteMap;
 	
 	public AbstractPolySynth(Sequencer seq) {
 		this.seq = seq;
@@ -19,7 +19,7 @@ public abstract class AbstractPolySynth implements InputEventListener {
 
 	@Override
 	public void onInputEvent(InputEvent inputEvent) {
-		PlayLive player;
+		PlayerType player;
 		
 		switch (inputEvent.getType()) {
 		case KEY_DOWN:
@@ -40,9 +40,9 @@ public abstract class AbstractPolySynth implements InputEventListener {
 		}
 	}
 	
-	protected abstract PlayLive startNote(int note, int velocity);
+	protected abstract PlayerType startNote(int note, int velocity);
 	
-	protected abstract void endNote(int note, PlayLive player);
+	protected abstract void endNote(int note, PlayerType player);
 	
 	public void close() {
 		for (PlayLive player : noteMap.values()) {
