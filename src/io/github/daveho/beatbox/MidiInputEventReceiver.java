@@ -8,6 +8,12 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 
+/**
+ * A midi Receiver implementation which translates midi messages
+ * to {@link InputEvent}s.  An implementation should be created
+ * by calling {@link #create()}, which automatically finds
+ * a midi device offering input events.
+ */
 public class MidiInputEventReceiver implements Receiver {
 	private MidiDevice device;
 	private List<InputEventListener> listeners;
@@ -16,6 +22,11 @@ public class MidiInputEventReceiver implements Receiver {
 		this.listeners = new ArrayList<>();
 	}
 
+	/**
+	 * Add an {@link InputEventListener}.
+	 * 
+	 * @param listener the {@link InputEventListener} to add
+	 */
 	public void addListener(InputEventListener listener) {
 		listeners.add(listener);
 	}
@@ -51,6 +62,13 @@ public class MidiInputEventReceiver implements Receiver {
 		device.close();
 	}
 
+	/**
+	 * Create a {@link MidiInputEventReceiver} using the first discovered
+	 * device which offers midi input events.
+	 * 
+	 * @return the {@link MidiInputEventReceiver}
+	 * @throws MidiUnavailableException
+	 */
 	public static MidiInputEventReceiver create() throws MidiUnavailableException {
 		MidiInputEventReceiver r = new MidiInputEventReceiver();
 		MidiDevice device = CaptureMidiEvents.getMidiInput(r);

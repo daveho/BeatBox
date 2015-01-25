@@ -9,6 +9,14 @@ import net.beadsproject.beads.data.Buffer;
  * midi input events.)
  */
 public class PlayLiveSquareWave extends PlayLiveNote {
+	/**
+	 * Constructor.
+	 * 
+	 * @param ac    the AudioContext
+	 * @param freq  the frequency
+	 * @param gain  the gain
+	 * @param out   the UGen to which the generated note should be sent
+	 */
 	public PlayLiveSquareWave(AudioContext ac, float freq, float gain, UGen out) {
 		super(ac, freq, gain, out, Buffer.SQUARE);
 	}
