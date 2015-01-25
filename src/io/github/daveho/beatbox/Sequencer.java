@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Sequencer: triggers {@link SequencerEvent}s (e.g., play a sound) when beats occur.
@@ -28,8 +29,9 @@ public class Sequencer {
 	private int maxBeat;
 	
 	// Shutdown hooks
-//	private Runnable shutdownHook;
 	private List<Runnable> shutdownHooks;
+	
+	private AtomicReference<SequencerBeat> sequencerBeat;
 	
 	/**
 	 * Constructor.
@@ -42,6 +44,7 @@ public class Sequencer {
 		this.eventMap = new HashMap<>();
 		this.maxBeat = 0;
 		this.shutdownHooks = new ArrayList<>();
+		this.sequencerBeat = new AtomicReference<>();
 	}
 	
 	/**
@@ -51,6 +54,15 @@ public class Sequencer {
 	 */
 	public Desk getDesk() {
 		return desk;
+	}
+	
+	/**
+	 * Get the current {@link SequencerBeat} (beat number and timestamp).
+	 * 
+	 * @return the current {@link SequencerBeat}
+	 */
+	public SequencerBeat getSequencerBeat() {
+		return sequencerBeat.get();
 	}
 	
 	/**
@@ -107,6 +119,8 @@ public class Sequencer {
 	 * @param beat the beat (0 for first, 1 for second, etc.)
 	 */
 	public void tick(int beat) {
+		this.sequencerBeat.set(new SequencerBeat(beat, System.nanoTime()));
+		
 		List<ScheduledEvent> events = eventMap.get(beat);
 		if (events != null) {
 			for (ScheduledEvent e : events) {

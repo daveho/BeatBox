@@ -245,51 +245,47 @@ public class BeatBox extends Player {
 	public void liveSynth() throws MidiUnavailableException {
 		final Map<Integer, PlayLive> noteMap = new HashMap<>();
 		
-		Receiver receiver = new Receiver() {
+		final InputEventListener listener = new InputEventListener() {
 			@Override
-			public void send(MidiMessage message, long timeStamp) {
-				byte[] data = message.getMessage();
-				if (message.getStatus() == 144) {
-					// Key down
-					int note = data[1];
-					int velocity = data[2]; // unused for now
-					
-					float freq = Pitch.mtof(note);
-					
-					float gain = (velocity/128.0f) * 0.15f;
-
-					PlayLive player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
-//					PlayLive player = new PlayLiveTriangleWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
-					noteMap.put(note, player);
-					
+			public void onInputEvent(InputEvent inputEvent) {
+				System.out.println("Input event received!");
+				
+				PlayLive player;
+				
+				switch (inputEvent.getType()) {
+				case KEY_DOWN:
+					float freq = Pitch.mtof(inputEvent.getNote());
+					float gain = (inputEvent.getVelocity()/128.0f) * 0.15f;
+					player = new PlayLiveSquareWave(seq.getDesk().getAc(), freq, gain, desk.getTrack(0));
+					noteMap.put(inputEvent.getNote(), player);
 					player.start();
-				} else if (message.getStatus() == 128) {
-					// Key up
-					int note = data[1];
-					PlayLive player = noteMap.get(note);
+					break;
+					
+				case KEY_UP:
+					player = noteMap.get(inputEvent.getNote());
 					if (player != null) {
 						player.stop();
-						noteMap.remove(note);
+						noteMap.remove(inputEvent.getNote());
 					}
-				}
-			}
-			
-			@Override
-			public void close() {
-				for (PlayLive player : noteMap.values()) {
-					player.stop();
+					break;
+					
+				default:
+					System.out.println("Unknown input event type? " + inputEvent.getType());
 				}
 			}
 		};
 		
-		final MidiDevice device = CaptureMidiEvents.getMidiInput(receiver);
+		MidiInputEventReceiver r = MidiInputEventReceiver.create();
+		r.addListener(listener);
 		
 		seq.addShutdownHook(new Runnable() {
 			@Override
 			public void run() {
 				System.out.println("Sequencer shutting down, close midi device");
-				receiver.close();
-				device.close();
+				r.close();
+				for (PlayLive p : noteMap.values()) {
+					p.stop();
+				}
 			}
 		});
 	}
