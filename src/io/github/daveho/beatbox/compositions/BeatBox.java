@@ -2,20 +2,14 @@ package io.github.daveho.beatbox.compositions;
 
 import static io.github.daveho.beatbox.EventGroup.group;
 import io.github.daveho.beatbox.EventGroup;
-import io.github.daveho.beatbox.MidiInputEventReceiver;
 import io.github.daveho.beatbox.PlaySampleEvent;
 import io.github.daveho.beatbox.PlaySquareWaveEvent;
 import io.github.daveho.beatbox.Player;
-import io.github.daveho.beatbox.RecordInputEventsListener;
-import io.github.daveho.beatbox.RecordedInputEvent;
 import io.github.daveho.beatbox.SampleBank;
 import io.github.daveho.beatbox.SequencerEvent;
 import io.github.daveho.beatbox.SquareWavePolySynth;
 
 import javax.sound.midi.MidiUnavailableException;
-
-import net.beadsproject.beads.ugens.Gain;
-import net.beadsproject.beads.ugens.Reverb;
 
 public class BeatBox extends Player {
 	static final int BPM = 16;
@@ -54,22 +48,7 @@ public class BeatBox extends Player {
 		super(BPM, MEASURE_LEN_MS, NUM_TRACKS);
 		SampleBank.preload(Samples.class);
 		
-		// Track 0 feeds into the reverb splitter, which
-		// feeds into both the AudioContext's output (implicitly,
-		// via the call to setTrack), and the reverb's output
-		// (which in turn is fed into the AudioContext's
-		// output).  So, the eventual output is a mix of both
-		// the wet and dry signals.
-		Gain reverbSplit = new Gain(seq.getDesk().getAc(), 1);
-		Reverb reverb = new Reverb(seq.getDesk().getAc());
-		
-//		reverb.setDamping(.4f);
-		reverb.setEarlyReflectionsLevel(.5f);
-		reverb.setLateReverbLevel(.1f);
-		
-		reverb.addInput(reverbSplit);
-		seq.getDesk().setTrack(0, reverbSplit);
-		seq.getDesk().getAc().out.addInput(reverb);
+		addReverbToTrack(0, .7f, .5f, .1f);
 		
 		// Sample events
 		kick = new PlaySampleEvent(Samples.KICK_1, 0.4f);
@@ -129,8 +108,8 @@ public class BeatBox extends Player {
 		g_claps1 = group(12, clap1, 14, clap1);
 		g_boings1 = group(0, boing1);
 	}
-	
-	
+
+
 	SequencerEvent oneBeatSquareWave(float freq) {
 		return new PlaySquareWaveEvent(BEAT_LEN_MS, freq, 0.1f);
 	}
@@ -253,39 +232,6 @@ public class BeatBox extends Player {
 		m = addRhythm6(m);
 	}
 	
-	public void liveSynth(boolean record) throws MidiUnavailableException {
-		SquareWavePolySynth synth = new SquareWavePolySynth(seq);
-		
-		MidiInputEventReceiver r = MidiInputEventReceiver.create();
-		
-		if (record) {
-			final RecordInputEventsListener recorder = new RecordInputEventsListener(seq);
-			recorder.setDelegate(synth);
-			r.addListener(recorder);
-			
-			seq.addShutdownHook(new Runnable() {
-				@Override
-				public void run() {
-					System.out.println("Recorded input events:");
-					for (RecordedInputEvent rec : recorder.getRecordedEvents()) {
-						System.out.println(rec.toString());
-					}
-				}
-			});
-		} else {
-			r.addListener(synth);
-		}
-		
-		seq.addShutdownHook(new Runnable() {
-			@Override
-			public void run() {
-				System.out.println("Sequencer shutting down, close midi device");
-				r.close();
-				synth.close();
-			}
-		});
-	}
-	
 	public static void main(String[] args) throws MidiUnavailableException {
 		BeatBox beatBox = new BeatBox();
 
@@ -297,7 +243,8 @@ public class BeatBox extends Player {
 //		m = beatBox.addTicks(m);
 //		m = beatBox.addTicks(m);
 		
-		beatBox.liveSynth(true);
+		SquareWavePolySynth synth = new SquareWavePolySynth(beatBox.seq);
+		beatBox.liveSynth(synth, true);
 
 //		beatBox.recordToFile("beats.wav");
 		

@@ -3,10 +3,14 @@ package io.github.daveho.beatbox;
 import java.io.File;
 import java.io.IOException;
 
+import javax.sound.midi.MidiUnavailableException;
+
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
 import net.beadsproject.beads.ugens.Clock;
+import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.RecordToFile;
+import net.beadsproject.beads.ugens.Reverb;
 
 /**
  * Play music using a {@link Sequencer}.
@@ -96,6 +100,71 @@ public class Player {
 		
 		
 		ac.start();
+	}
+
+	/**
+	 * Allow live playing.
+	 * 
+	 * @param synth   the {@link InputEventListener} to which input events should
+	 *                be sent: e.g. a synth
+	 * @param record  true if input events should be recorded (TODO: allow destination)
+	 * @throws MidiUnavailableException
+	 */
+	public void liveSynth(InputEventListener synth, boolean record) throws MidiUnavailableException {
+		MidiInputEventReceiver r = MidiInputEventReceiver.create();
+		
+		if (record) {
+			final RecordInputEventsListener recorder = new RecordInputEventsListener(seq);
+			recorder.setDelegate(synth);
+			r.addListener(recorder);
+			
+			seq.addShutdownHook(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("Recorded input events:");
+					for (RecordedInputEvent rec : recorder.getRecordedEvents()) {
+						System.out.println(rec.toString());
+					}
+				}
+			});
+		} else {
+			r.addListener(synth);
+		}
+		
+		seq.addShutdownHook(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("Sequencer shutting down, close midi device");
+				r.close();
+				synth.close();
+			}
+		});
+	}
+
+	/**
+	 * Add reverb to a track.
+	 * 
+	 * @param trackNumber            the track
+	 * @param damping                damping
+	 * @param earlyReflectionsLevel  early reflections level
+	 * @param lateReverbLevel        late reverb level
+	 */
+	public void addReverbToTrack(int trackNumber, float damping, float earlyReflectionsLevel, float lateReverbLevel) {
+		// The track feeds into the reverb splitter, which
+		// feeds into both the AudioContext's output (implicitly,
+		// via the call to setTrack), and the reverb's output
+		// (which in turn is fed into the AudioContext's
+		// output).  So, the eventual output is a mix of both
+		// the wet and dry signals.
+		Gain reverbSplit = new Gain(seq.getDesk().getAc(), 1);
+		Reverb reverb = new Reverb(seq.getDesk().getAc());
+		reverb.setDamping(damping);
+		reverb.setEarlyReflectionsLevel(earlyReflectionsLevel);
+		reverb.setLateReverbLevel(lateReverbLevel);
+		
+		reverb.addInput(reverbSplit);
+		seq.getDesk().setTrack(trackNumber, reverbSplit);
+		seq.getDesk().getAc().out.addInput(reverb);
 	}
 
 }

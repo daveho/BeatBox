@@ -49,6 +49,11 @@ public class RecordInputEventsListener implements InputEventListener {
 			delegate.onInputEvent(inputEvent);
 		}
 	}
+	
+	@Override
+	public void close() {
+		// TODO: should save		
+	}
 
 	/**
 	 * Get all {@link RecordedInputEvent}s.

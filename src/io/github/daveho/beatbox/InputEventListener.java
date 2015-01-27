@@ -10,4 +10,9 @@ public interface InputEventListener {
 	 * @param inputEvent the received {@link InputEvent}
 	 */
 	public void onInputEvent(InputEvent inputEvent);
+	
+	/**
+	 * Called when no further events are forthcoming.
+	 */
+	public void close();
 }
