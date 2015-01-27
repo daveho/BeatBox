@@ -123,7 +123,7 @@ public class Player {
 				public void run() {
 					System.out.println("Recorded input events:");
 					for (RecordedInputEvent rec : recorder.getRecordedEvents()) {
-						System.out.println(rec.toString());
+						System.out.println(rec.toString() + ",");
 					}
 				}
 			});

@@ -10,10 +10,12 @@ import java.util.Map;
  */
 public abstract class AbstractPolySynth<PlayerType extends PlayLive> implements InputEventListener {
 	protected final Sequencer seq;
+	protected final float maxGain;
 	private final Map<Integer, PlayerType> noteMap;
 	
-	public AbstractPolySynth(Sequencer seq) {
+	public AbstractPolySynth(Sequencer seq, float maxGain) {
 		this.seq = seq;
+		this.maxGain = maxGain;
 		this.noteMap = new HashMap<>();
 	}
 
