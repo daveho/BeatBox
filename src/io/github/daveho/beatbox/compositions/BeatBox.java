@@ -1,6 +1,16 @@
-package io.github.daveho.beatbox;
+package io.github.daveho.beatbox.compositions;
 
 import static io.github.daveho.beatbox.EventGroup.group;
+import io.github.daveho.beatbox.EventGroup;
+import io.github.daveho.beatbox.MidiInputEventReceiver;
+import io.github.daveho.beatbox.PlaySampleEvent;
+import io.github.daveho.beatbox.PlaySquareWaveEvent;
+import io.github.daveho.beatbox.Player;
+import io.github.daveho.beatbox.RecordInputEventsListener;
+import io.github.daveho.beatbox.RecordedInputEvent;
+import io.github.daveho.beatbox.SampleBank;
+import io.github.daveho.beatbox.SequencerEvent;
+import io.github.daveho.beatbox.SquareWavePolySynth;
 
 import javax.sound.midi.MidiUnavailableException;
 
@@ -42,7 +52,7 @@ public class BeatBox extends Player {
 	
 	public BeatBox() {
 		super(BPM, MEASURE_LEN_MS, NUM_TRACKS);
-		Samples.loadAll();
+		SampleBank.preload(Samples.class);
 		
 		// Track 0 feeds into the reverb splitter, which
 		// feeds into both the AudioContext's output (implicitly,

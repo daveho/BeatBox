@@ -1,9 +1,4 @@
-package io.github.daveho.beatbox;
-
-import java.lang.reflect.Field;
-
-import net.beadsproject.beads.data.Sample;
-import net.beadsproject.beads.data.SampleManager;
+package io.github.daveho.beatbox.compositions;
 
 public interface Samples {
 	public static String KICK_1 = "175961__fawkes027__analogish-kick-001.wav";
@@ -21,31 +16,4 @@ public interface Samples {
 	public static String COWBELL_1 = "99766__menegass__cow.wav";
 	public static String COWBELL_2 = "159766__timgormly__cowbell-os-4.wav";
 	public static String CYMBAL_1 = "132413__sajmund__fast-trashy-cymbal.wav";
-	
-	/**
-	 * Retrieve a sample.
-	 * 
-	 * @param fileName filename of the sample
-	 * @return the sample
-	 */
-	public static Sample get(String fileName) {
-		return SampleManager.sample("samples/" + fileName);
-	}
-
-	/**
-	 * Load all samples.
-	 * Assumes that all fields are static strings indicating
-	 * filenames of samples.
-	 */
-	public static void loadAll() {
-		try {
-			Class<Samples> cls = Samples.class;
-			for (Field field : cls.getDeclaredFields()) {
-				String fileName = (String) field.get(null);
-				get(fileName);
-			}
-		} catch (Throwable e) {
-			throw new RuntimeException("Couldn't load samples", e);
-		}
-	}
 }

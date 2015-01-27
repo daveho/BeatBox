@@ -13,7 +13,7 @@ public class PlaySampleEvent extends SimpleSequencerEvent {
 	private float gain;
 
 	public PlaySampleEvent(String fileName, float gain) {
-		this.sample = Samples.get(fileName);
+		this.sample = SampleBank.get(fileName);
 		this.gain = gain;
 	}
 
