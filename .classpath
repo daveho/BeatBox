@@ -12,6 +12,10 @@
 			<attribute name="javadoc_location" value="http://www.beadsproject.net/doc"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/gervill.jar"/>
+	<classpathentry kind="lib" path="lib/gervill.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="https://gervill.java.net/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
