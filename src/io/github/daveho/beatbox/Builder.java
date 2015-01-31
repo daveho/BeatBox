@@ -80,4 +80,10 @@ public class Builder {
 		ugen.addInput(g);
 		return new Builder(ac, g);
 	}
+	
+	public Builder withLinearRise(float riseTimeMs) {
+		LinearRise rise = new LinearRise(ac, riseTimeMs);
+		ugen.addInput(rise);
+		return new Builder(ac, rise);
+	}
 }

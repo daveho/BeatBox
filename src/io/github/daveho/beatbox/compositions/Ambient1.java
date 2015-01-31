@@ -66,7 +66,7 @@ public class Ambient1 extends Player {
 		m = composition.addBasicRhythm(m);
 
 //		SquareWavePolySynth synth = new SquareWavePolySynth(composition.seq, .1f);
-		TriangleWavePolySynth synth = new TriangleWavePolySynth(composition.seq, 0.1f);
+		TriangleWavePolySynth synth = new TriangleWavePolySynth(composition.seq, 0.1f, 0);
 		composition.liveSynth(synth, true);
 		
 		/*

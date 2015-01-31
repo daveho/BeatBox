@@ -4,13 +4,14 @@ import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.data.Pitch;
 
 public class TriangleWavePolySynth extends AbstractPolySynth {
-	public TriangleWavePolySynth(Sequencer seq, float maxGain) {
-		super(seq, maxGain, 0);
+	public TriangleWavePolySynth(Sequencer seq, float maxGain, int trackIndex) {
+		super(seq, maxGain, trackIndex);
 	}
 
 	@Override
 	protected PlayLive startNote(int note, int velocity) {
 		UGen playTriangleWave = Builder.build(seq.getDesk().getAc(), seq.getDesk().getTrack(trackIndex))
+			.withLinearRise(100.0f)
 			.withGain((velocity/128.0f) * maxGain)
 			.playTriangleWave(Pitch.mtof(note))
 			.getUgen();
