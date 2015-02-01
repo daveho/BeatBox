@@ -23,8 +23,8 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 		this.freq = new Static(ac, 0f);
 		
 		this.b = Builder.build(ac, out)
-//				.prepend(new LinearRise(ac, 120.0f)).label("rise")
-				.prepend(new Static(ac, 0f)).label("noteGain")
+				.prepend(new LinearRise(ac, 120.0f)).label("rise")
+				.prepend(new Gain(ac, 1, 0f)).label("noteGain")
 				.prepend(new WavePlayer(ac, freq, Buffer.SQUARE)).label("waveplayer");
 		
 		out.pause(true);
@@ -51,6 +51,9 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 		if (Midi.hasMidiMessage(message)) {
 			MidiMessage msg = Midi.getMidiMessage(message);
 			
+			UGen noteGainUGen = b.get("noteGain");
+			System.out.println("noteGain is a " + noteGainUGen.getClass().getSimpleName());
+			
 			if (msg.getStatus() == Midi.STATUS_KEY_DOWN) {
 				// Enable output
 				out.start();
@@ -58,13 +61,13 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 				// Start playing
 				float noteGain = Midi.getVelocity(msg) / 128.0f;
 //				System.out.println("Note gain is " + noteGain);
-				b.get("noteGain").setValue(noteGain);
+				noteGainUGen.setValue(noteGain);
 				freq.setValue(Pitch.mtof(Midi.getNote(msg)));
 			} else if (msg.getStatus() == Midi.STATUS_KEY_UP) {
 				// Stop playing
 				// TODO: could set a trigger for a dynamic fade, for now just stop abruptly
 				freq.setValue(0f);
-				b.get("noteGain").setValue(0f);
+				noteGainUGen.setValue(0f);
 			}
 		}
 	}
