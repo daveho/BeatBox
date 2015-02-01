@@ -1,7 +1,5 @@
 package io.github.daveho.beatbox;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Abstract base class for polysynths that receive input events and
@@ -12,19 +10,31 @@ public abstract class AbstractPolySynth implements InputEventListener {
 	protected final Sequencer seq;
 	protected final float maxGain;
 	protected final int trackIndex;
-	private final Map<Integer, PlayLive> noteMap;
+//	private final Map<Integer, Instrument> noteMap;
+	protected final int maxPoly;
+	protected final Instrument[] instruments;
 	
-	public AbstractPolySynth(Sequencer seq, float maxGain, int trackIndex) {
+	/**
+	 * 
+	 * @param seq
+	 * @param maxGain
+	 * @param trackIndex
+	 * @param maxPoly
+	 */
+	public AbstractPolySynth(Sequencer seq, float maxGain, int trackIndex, int maxPoly) {
 		this.seq = seq;
 		this.maxGain = maxGain;
 		this.trackIndex = trackIndex;
-		this.noteMap = new HashMap<>();
+		this.maxPoly = maxPoly;
+		//this.noteMap = new HashMap<>();
+		this.instruments = new Instrument[maxPoly];
 	}
 
 	@Override
 	public void onInputEvent(InputEvent inputEvent) {
-		PlayLive player;
-		
+		Instrument player;
+
+		/*
 		switch (inputEvent.getType()) {
 		case KEY_DOWN:
 			player = startNote(inputEvent.getNote(), inputEvent.getVelocity());
@@ -42,15 +52,52 @@ public abstract class AbstractPolySynth implements InputEventListener {
 		default:
 			System.out.println("Unknown input event type? " + inputEvent.getType());
 		}
-	}
-	
-	protected abstract PlayLive startNote(int note, int velocity);
-	
-	protected abstract void endNote(int note, PlayLive player);
-	
-	public void close() {
-		for (PlayLive player : noteMap.values()) {
-			player.stop();
+		*/
+		
+		switch (inputEvent.getType()) {
+		case KEY_DOWN:
+			player = findAvailable();
+			if (player != null) {
+				player.setParam(ParamType.NOTE, inputEvent.getNote());
+				player.on();
+			}
+			break;
+		case KEY_UP:
+			player = find(inputEvent.getNote());
+			if (player != null) {
+				player.off();
+			}
+			break;
 		}
 	}
+
+	private Instrument findAvailable() {
+		for (Instrument instrument : instruments) {
+			if (!instrument.isOn()) {
+				return instrument;
+			}
+		}
+		return null;
+	}
+
+	private Instrument find(int note) {
+		for (Instrument instrument : instruments) {
+			if (instrument.isOn() && instrument.hasParam(ParamType.NOTE)) {
+				if (instrument.getParam(ParamType.NOTE) == (float)note) {
+					return instrument;
+				}
+			}
+		}
+		return null;
+	}
+	
+//	protected abstract Instrument startNote(int note, int velocity);
+//	
+//	protected abstract void endNote(int note, Instrument player);
+//	
+//	public void close() {
+//		for (Instrument player : noteMap.values()) {
+//			player.stop();
+//		}
+//	}
 }

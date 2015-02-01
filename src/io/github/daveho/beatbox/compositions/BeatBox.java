@@ -243,7 +243,7 @@ public class BeatBox extends Player {
 //		m = beatBox.addTicks(m);
 //		m = beatBox.addTicks(m);
 		
-		SquareWavePolySynth synth = new SquareWavePolySynth(beatBox.seq, .15f, 0);
+		SquareWavePolySynth synth = new SquareWavePolySynth(beatBox.seq, .15f, 0, 10);
 		beatBox.liveSynth(synth, true);
 
 //		beatBox.recordToFile("beats.wav");
