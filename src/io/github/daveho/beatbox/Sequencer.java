@@ -29,7 +29,9 @@ public class Sequencer {
 	private int maxBeat;
 	
 	// Shutdown hooks
+	private boolean firstBeat;
 	private List<Runnable> shutdownHooks;
+	private List<Runnable> startupHooks;
 	
 	private AtomicReference<SequencerBeat> sequencerBeat;
 	
@@ -43,6 +45,8 @@ public class Sequencer {
 		this.idleShutdownCount = DEFAULT_IDLE_SHUTDOWN_COUNT;
 		this.eventMap = new HashMap<>();
 		this.maxBeat = 0;
+		this.firstBeat = true;
+		this.startupHooks = new ArrayList<>();
 		this.shutdownHooks = new ArrayList<>();
 		this.sequencerBeat = new AtomicReference<>();
 	}
@@ -119,6 +123,14 @@ public class Sequencer {
 	 * @param beat the beat (0 for first, 1 for second, etc.)
 	 */
 	public void tick(int beat) {
+		if (firstBeat) {
+			// Run startup hooks
+			for (Runnable hook : startupHooks) {
+				hook.run();
+			}
+			firstBeat = false;
+		}
+
 		this.sequencerBeat.set(new SequencerBeat(beat, System.nanoTime()));
 		
 		List<ScheduledEvent> events = eventMap.get(beat);
@@ -136,6 +148,10 @@ public class Sequencer {
 				h.run();
 			}
 		}
+	}
+
+	public void addStartupHook(Runnable runnable) {
+		this.startupHooks.add(runnable);
 	}
 	
 	/**

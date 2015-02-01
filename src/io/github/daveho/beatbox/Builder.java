@@ -1,5 +1,6 @@
 package io.github.daveho.beatbox;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,6 +88,10 @@ public class Builder {
 	public UGen get(String label) {
 //		System.out.println(map.size() + " entries in map");
 		return map.get(label);
+	}
+
+	public Collection<UGen> all() {
+		return map.values();
 	}
 	
 //	/**

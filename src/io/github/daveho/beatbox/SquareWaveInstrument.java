@@ -38,6 +38,13 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 	}
 	
 	@Override
+	public void start() {
+		for (UGen u : b.all()) {
+			u.start();
+		}
+	}
+	
+	@Override
 	protected void messageReceived(Bead message) {
 		if (Midi.hasMidiMessage(message)) {
 			MidiMessage msg = Midi.getMidiMessage(message);
