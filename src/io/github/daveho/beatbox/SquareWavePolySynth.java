@@ -19,7 +19,8 @@ public class SquareWavePolySynth extends AbstractPolySynth {
 			public void run() {
 				System.out.println("Running startup hook!");
 				for (Bead instr : instruments) {
-					seq.getDesk().getTrack(trackIndex).addInput(((SquareWaveInstrument)instr).getOut());
+					SquareWaveInstrument sq = (SquareWaveInstrument)instr;
+					seq.getDesk().getTrack(trackIndex).addInput(sq.getOut());
 				}
 			}
 		});

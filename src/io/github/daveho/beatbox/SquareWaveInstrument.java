@@ -26,6 +26,8 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 //				.prepend(new LinearRise(ac, 120.0f)).label("rise")
 				.prepend(new Static(ac, 0f)).label("noteGain")
 				.prepend(new WavePlayer(ac, freq, Buffer.SQUARE)).label("waveplayer");
+		
+		out.pause(true);
 	}
 	
 	/**
@@ -50,6 +52,9 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 			MidiMessage msg = Midi.getMidiMessage(message);
 			
 			if (msg.getStatus() == Midi.STATUS_KEY_DOWN) {
+				// Enable output
+				out.start();
+				
 				// Start playing
 				float noteGain = Midi.getVelocity(msg) / 128.0f;
 //				System.out.println("Note gain is " + noteGain);
