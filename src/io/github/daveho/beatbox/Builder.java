@@ -5,9 +5,6 @@ import java.util.Map;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.UGen;
-import net.beadsproject.beads.data.Buffer;
-import net.beadsproject.beads.ugens.Gain;
-import net.beadsproject.beads.ugens.WavePlayer;
 
 /**
  * Factory for creating chains of UGens using a fluid API.
@@ -59,7 +56,7 @@ public class Builder {
 		return new Builder(ac, out, new HashMap<String, UGen>());
 	}
 	
-	private Builder prepend(UGen ugen) {
+	public Builder prepend(UGen ugen) {
 		this.ugen.addInput(ugen);
 		return new Builder(ac, this.ugen, this.map);
 	}
@@ -74,6 +71,7 @@ public class Builder {
 	 */
 	public Builder label(String label) {
 		HashMap<String, UGen> map = new HashMap<>();
+		map.putAll(this.map);
 		map.put(label, ugen);
 		ugen.setName(label);
 		return new Builder(ac, ugen, map);
@@ -87,46 +85,47 @@ public class Builder {
 	 *         such UGen
 	 */
 	public UGen get(String label) {
+//		System.out.println(map.size() + " entries in map");
 		return map.get(label);
 	}
 	
-	/**
-	 * Prepend a square wave player to the chain.
-	 * 
-	 * @param freq the frequency
-	 * @return a {@link Builder} whose head is the square wave player
-	 */
-	public Builder playSquareWave(float freq) {
-		return prepend(new WavePlayer(ac, freq, Buffer.SQUARE));
-	}
-	
-	/**
-	 * Prepend a triangle wave player to the chain.
-	 * 
-	 * @param freq the frequency
-	 * @return a {@link Builder} whose head is the triangle wave player
-	 */
-	public Builder playTriangleWave(float freq) {
-		return prepend(new WavePlayer(ac, freq, Buffer.TRIANGLE));
-	}
-
-	/**
-	 * Prepend a Gain to the chain.
-	 * 
-	 * @param gain the gain factor
-	 * @return a {@link Builder} whose head is the Gain
-	 */
-	public Builder withGain(float gain) {
-		return prepend(new Gain(ac, 1, gain));
-	}
-	
-	/**
-	 * Prepend a linear rise to the chain.
-	 * 
-	 * @param riseTimeMs rise time in milliseconds
-	 * @return a {@link Builder} whose head is the Gain
-	 */
-	public Builder withLinearRise(float riseTimeMs) {
-		return prepend(new LinearRise(ac, riseTimeMs));
-	}
+//	/**
+//	 * Prepend a square wave player to the chain.
+//	 * 
+//	 * @param freq the frequency
+//	 * @return a {@link Builder} whose head is the square wave player
+//	 */
+//	public Builder playSquareWave(float freq) {
+//		return prepend(new WavePlayer(ac, freq, Buffer.SQUARE));
+//	}
+//	
+//	/**
+//	 * Prepend a triangle wave player to the chain.
+//	 * 
+//	 * @param freq the frequency
+//	 * @return a {@link Builder} whose head is the triangle wave player
+//	 */
+//	public Builder playTriangleWave(float freq) {
+//		return prepend(new WavePlayer(ac, freq, Buffer.TRIANGLE));
+//	}
+//
+//	/**
+//	 * Prepend a Gain to the chain.
+//	 * 
+//	 * @param gain the gain factor
+//	 * @return a {@link Builder} whose head is the Gain
+//	 */
+//	public Builder withGain(float gain) {
+//		return prepend(new Gain(ac, 1, gain));
+//	}
+//	
+//	/**
+//	 * Prepend a linear rise to the chain.
+//	 * 
+//	 * @param riseTimeMs rise time in milliseconds
+//	 * @return a {@link Builder} whose head is the Gain
+//	 */
+//	public Builder withLinearRise(float riseTimeMs) {
+//		return prepend(new LinearRise(ac, riseTimeMs));
+//	}
 }

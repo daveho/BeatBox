@@ -1,105 +1,89 @@
 package io.github.daveho.beatbox;
 
+import java.util.Arrays;
+
+import javax.sound.midi.MidiMessage;
+
+import net.beadsproject.beads.core.Bead;
+import net.beadsproject.beads.core.UGen;
+
 
 /**
  * Abstract base class for polysynths that receive input events and
  * play notes in response.  Each in-progress note is represented
  * by a {@live PlayLive} object.
  */
-public abstract class AbstractPolySynth implements InputEventListener {
+public abstract class AbstractPolySynth extends Bead {
 	protected final Sequencer seq;
-	protected final float maxGain;
 	protected final int trackIndex;
-//	private final Map<Integer, Instrument> noteMap;
 	protected final int maxPoly;
-	protected final Instrument[] instruments;
+	protected final UGen[] instruments;
+	protected final int[] notes;
 	
 	/**
+	 * Constructor.
 	 * 
-	 * @param seq
-	 * @param maxGain
-	 * @param trackIndex
-	 * @param maxPoly
+	 * @param seq         the {@link Sequencer}
+	 * @param trackIndex  index of track to which audio output should be sent
+	 * @param maxPoly     maximum degree of polyphony
 	 */
-	public AbstractPolySynth(Sequencer seq, float maxGain, int trackIndex, int maxPoly) {
+	public AbstractPolySynth(Sequencer seq, int trackIndex, int maxPoly) {
 		this.seq = seq;
-		this.maxGain = maxGain;
 		this.trackIndex = trackIndex;
 		this.maxPoly = maxPoly;
 		//this.noteMap = new HashMap<>();
-		this.instruments = new Instrument[maxPoly];
+		this.instruments = new UGen[maxPoly];
+		this.notes = new int[maxPoly];
+		Arrays.fill(this.notes, -1);
 	}
-
+	
 	@Override
-	public void onInputEvent(InputEvent inputEvent) {
-		Instrument player;
-
-		/*
-		switch (inputEvent.getType()) {
-		case KEY_DOWN:
-			player = startNote(inputEvent.getNote(), inputEvent.getVelocity());
-			noteMap.put(inputEvent.getNote(), player);
-			break;
-			
-		case KEY_UP:
-			player = noteMap.get(inputEvent.getNote());
-			if (player != null) {
-				player.stop();
-				noteMap.remove(inputEvent.getNote());
-			}
-			break;
-			
-		default:
-			System.out.println("Unknown input event type? " + inputEvent.getType());
-		}
-		*/
+	protected void messageReceived(Bead message) {
 		
-		switch (inputEvent.getType()) {
-		case KEY_DOWN:
-			player = findAvailable();
-			if (player != null) {
-				System.out.println("Found instrument to play note " + inputEvent.getNote());
-				player.setParam(ParamType.NOTE, inputEvent.getNote());
-				player.on();
-			}
-			break;
-		case KEY_UP:
-			player = find(inputEvent.getNote());
-			if (player != null) {
-				player.off();
-			}
-			break;
-		}
-	}
-
-	private Instrument findAvailable() {
-		for (Instrument instrument : instruments) {
-			if (!instrument.isOn()) {
-				return instrument;
-			}
-		}
-		System.out.println("No available instruments!");
-		return null;
-	}
-
-	private Instrument find(int note) {
-		for (Instrument instrument : instruments) {
-			if (instrument.isOn() && instrument.hasParam(ParamType.NOTE)) {
-				if (instrument.getParam(ParamType.NOTE) == (float)note) {
-					return instrument;
+		// TODO: when selecting an "available" instrument,
+		// we should select the least-recently-used one, in case
+		// an instrument is playing the end of a note following a
+		// STATUS_KEY_DOWN event.
+		
+		if (Midi.hasMidiMessage(message)) {
+			MidiMessage msg = Midi.getMidiMessage(message);
+			if (msg.getStatus() == Midi.STATUS_KEY_DOWN) {
+				int index = findFree();
+				if (index >= 0) {
+					notes[index] = Midi.getNote(msg);
+					// Notify the instrument of the message
+					instruments[index].message(message);
+					System.out.printf("Start playing note %d on instrument %d\n", notes[index], index);
+				}
+			} else if (msg.getStatus() == Midi.STATUS_KEY_UP) {
+				int note = Midi.getNote(msg);
+				int index = findPlaying(note);
+				if (index >= 0) {
+					// Notify the instrument of the message
+					instruments[index].message(message);
+					System.out.printf("Stop playing note %d on instrument %d\n", note, index);
+					notes[index] = -1;
 				}
 			}
 		}
-		return null;
 	}
-	
-//	protected abstract Instrument startNote(int note, int velocity);
-//	
-//	protected abstract void endNote(int note, Instrument player);
-//	
-//	public void close() {
-//		for (Instrument player : noteMap.values()) {
-//			player.stop();
-//		}
-//	}
+
+	private int findFree() {
+		// FIXME: need to implement an LRU scheme
+		for (int i = 0; i < notes.length; i++) {
+			if (notes[i] < 0) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	private int findPlaying(int note) {
+		for (int i = 0; i < notes.length; i++) {
+			if (notes[i] == note) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

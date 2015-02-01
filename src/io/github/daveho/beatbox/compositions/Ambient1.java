@@ -1,16 +1,13 @@
 package io.github.daveho.beatbox.compositions;
 
 import static io.github.daveho.beatbox.EventGroup.group;
-
-import javax.sound.midi.MidiUnavailableException;
-
 import io.github.daveho.beatbox.EventGroup;
-import io.github.daveho.beatbox.PlayBackInputEvents;
 import io.github.daveho.beatbox.PlaySampleEvent;
 import io.github.daveho.beatbox.Player;
 import io.github.daveho.beatbox.SampleBank;
 import io.github.daveho.beatbox.SquareWavePolySynth;
-import io.github.daveho.beatbox.TriangleWavePolySynth;
+
+import javax.sound.midi.MidiUnavailableException;
 
 public class Ambient1 extends Player {
 	static final int BPM = 16;
@@ -65,16 +62,14 @@ public class Ambient1 extends Player {
 		int m = 0;
 		m = composition.addBasicRhythm(m);
 
-//		SquareWavePolySynth synth = new SquareWavePolySynth(composition.seq, .1f);
-		/*
-		TriangleWavePolySynth synth = new TriangleWavePolySynth(composition.seq, 0.1f, 0, 10);
+		SquareWavePolySynth synth = new SquareWavePolySynth(composition.seq, 0, 10);
 		composition.liveSynth(synth, true);
-		*/
 
+		/*
 		TriangleWavePolySynth synth = new TriangleWavePolySynth(composition.seq, 0.1f, 0, 10);
 		PlayBackInputEvents playback = new PlayBackInputEvents(ominousIntro);
 		playback.addAll(composition.seq, 0, 0, synth);
-
+		 */
 		
 		composition.play();
 	}

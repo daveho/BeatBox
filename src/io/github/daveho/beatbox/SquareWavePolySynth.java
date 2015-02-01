@@ -1,20 +1,15 @@
 package io.github.daveho.beatbox;
 
-import net.beadsproject.beads.core.UGen;
-import net.beadsproject.beads.data.Pitch;
-
 public class SquareWavePolySynth extends AbstractPolySynth {
-	public SquareWavePolySynth(Sequencer seq, float maxGain, int trackIndex, int maxPoly) {
-		super(seq, maxGain, trackIndex, maxPoly);
+
+	public SquareWavePolySynth(Sequencer seq, int trackIndex, int maxPoly) {
+		super(seq, trackIndex, maxPoly);
+		
+		// Create instruments and connect to track output
 		for (int i = 0; i < maxPoly; i++) {
-			instruments[i] = new SquareWaveInstrument(seq, trackIndex);
+			instruments[i] = new SquareWaveInstrument(seq.getDesk().getAc(), 0.1f); // FIXME: hard-coded gain
+			seq.getDesk().getTrack(trackIndex).addInput(instruments[i]);
 		}
 	}
 
-	@Override
-	public void close() {
-		for (Instrument instrument : instruments) {
-			instrument.close();
-		}
-	}
 }

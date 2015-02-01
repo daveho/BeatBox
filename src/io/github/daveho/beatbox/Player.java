@@ -3,6 +3,7 @@ package io.github.daveho.beatbox;
 import java.io.File;
 import java.io.IOException;
 
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 
 import net.beadsproject.beads.core.AudioContext;
@@ -105,40 +106,22 @@ public class Player {
 	/**
 	 * Allow live playing.
 	 * 
-	 * @param synth   the {@link InputEventListener} to which input events should
+	 * @param synth   the {@link Bead} to which midi input events should
 	 *                be sent: e.g. a synth
 	 * @param record  true if input events should be recorded (TODO: allow destination)
 	 * @throws MidiUnavailableException
 	 */
-	public void liveSynth(InputEventListener synth, boolean record) throws MidiUnavailableException {
-		MidiInputEventReceiver r = MidiInputEventReceiver.create();
-		
-		if (record) {
-			final RecordInputEventsListener recorder = new RecordInputEventsListener(seq);
-			recorder.setDelegate(synth);
-			r.addListener(recorder);
-			
-			seq.addShutdownHook(new Runnable() {
-				@Override
-				public void run() {
-					System.out.println("Recorded input events:");
-					for (RecordedInputEvent rec : recorder.getRecordedEvents()) {
-						System.out.println(rec.toString() + ",");
-					}
-				}
-			});
-		} else {
-			r.addListener(synth);
-		}
-		
+	public void liveSynth(Bead synth, boolean record) throws MidiUnavailableException {
+		MidiMessageSource messageSource = new MidiMessageSource(ac);
+		final MidiDevice device = CaptureMidiEvents.getMidiInput(messageSource);
 		seq.addShutdownHook(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("Sequencer shutting down, close midi device");
-				r.close();
-				synth.close();
+				System.out.println("Done, shutting down midi device");
+				device.close();
 			}
 		});
+		messageSource.addMessageListener(synth);
 	}
 
 	/**
