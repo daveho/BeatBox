@@ -9,12 +9,16 @@ import net.beadsproject.beads.core.UGen;
  * Abstract base class for {@link Instrument}s which wrap a UGen.
  */
 public abstract class AbstractInstrument implements Instrument {
+	protected Sequencer seq;
+	protected int trackIndex;
 	private boolean started;
 	private final Map<ParamType, Float> paramMap;
 	protected UGen ugen;
 	private boolean on;
 	
-	public AbstractInstrument(UGen ugen) {
+	public AbstractInstrument(Sequencer seq, int trackIndex, UGen ugen) {
+		this.seq = seq;
+		this.trackIndex = trackIndex;
 		this.ugen = ugen;
 		this.paramMap = new HashMap<>();
 		this.started = false;
@@ -42,7 +46,9 @@ public abstract class AbstractInstrument implements Instrument {
 
 	@Override
 	public void on() {
+		System.out.println("Yurm! I am " + getClass().getSimpleName());
 		if (!started) {
+			seq.getDesk().getTrack(trackIndex).addInput(ugen);
 			ugen.start();
 			started = true;
 		}

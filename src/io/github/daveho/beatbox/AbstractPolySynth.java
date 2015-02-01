@@ -58,6 +58,7 @@ public abstract class AbstractPolySynth implements InputEventListener {
 		case KEY_DOWN:
 			player = findAvailable();
 			if (player != null) {
+				System.out.println("Found instrument to play note " + inputEvent.getNote());
 				player.setParam(ParamType.NOTE, inputEvent.getNote());
 				player.on();
 			}
@@ -77,6 +78,7 @@ public abstract class AbstractPolySynth implements InputEventListener {
 				return instrument;
 			}
 		}
+		System.out.println("No available instruments!");
 		return null;
 	}
 

@@ -9,7 +9,7 @@ public class TriangleWaveInstrument extends AbstractInstrument {
 	private Static freqValue;
 	
 	public TriangleWaveInstrument(Sequencer seq, int trackIndex) {
-		super(new WavePlayer(seq.getDesk().getAc(), new Static(seq.getDesk().getAc(), 0f), Buffer.TRIANGLE));
+		super(seq, trackIndex, new WavePlayer(seq.getDesk().getAc(), new Static(seq.getDesk().getAc(), 0f), Buffer.TRIANGLE));
 		freqValue = (Static) ((WavePlayer)ugen).getFrequencyUGen();
 	}
 	
@@ -18,11 +18,13 @@ public class TriangleWaveInstrument extends AbstractInstrument {
 		super.on();
 		float note = getParam(ParamType.NOTE);
 		freqValue.setValue(Pitch.mtof(note));
+		System.out.printf("Note on: %d\n", (int)note);
 	}
 
 	@Override
 	public void off() {
 		super.off();
+		System.out.printf("Note off\n");
 		freqValue.setValue(0f);
 	}
 
