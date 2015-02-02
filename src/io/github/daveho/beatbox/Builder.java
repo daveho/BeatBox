@@ -59,7 +59,7 @@ public class Builder {
 	
 	public Builder prepend(UGen ugen) {
 		this.ugen.addInput(ugen);
-		return new Builder(ac, this.ugen, this.map);
+		return new Builder(ac, ugen, this.map);
 	}
 	
 	/**

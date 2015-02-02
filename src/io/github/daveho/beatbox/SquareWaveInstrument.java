@@ -27,6 +27,7 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 		
 		this.b = Builder.build(ac, out)
 //				.prepend(new LinearRise(ac, 120.0f)).label("rise")
+				.prepend(new NoteOnLinearFadeIn(ac, 1500.0f)).label("rise")
 				.prepend(new Gain(ac, 1, 0f)).label("noteGain")
 				.prepend(new WavePlayer(ac, freq, Buffer.SQUARE)).label("waveplayer");
 		
@@ -54,6 +55,12 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 	@Override
 	protected void messageReceived(Bead message) {
 		if (Midi.hasMidiMessage(message)) {
+			// Broadcast the message to the other UGens in the signal chain
+			for (UGen ugen : b.all()) {
+				System.out.println("Notify " + ugen.getClass().getSimpleName());
+				ugen.message(message);
+			}
+			
 			MidiMessage msg = Midi.getMidiMessage(message);
 			
 			UGen noteGainUGen = b.get("noteGain");
