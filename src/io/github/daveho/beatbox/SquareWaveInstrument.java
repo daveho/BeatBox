@@ -14,11 +14,13 @@ import net.beadsproject.beads.ugens.WavePlayer;
 public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 
 	private Gain out;
+	private float gain;
 	private Static freq;
 	private Builder b;
 
 	public SquareWaveInstrument(AudioContext ac, float gain) {
-		this.out = new Gain(ac, 1, 0.15f);
+		this.out = new Gain(ac, 1);
+		this.gain = gain;
 		
 		this.freq = new Static(ac, 0f);
 		
@@ -63,7 +65,7 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 				out.start();
 				
 				// Start playing
-				float noteGain = Midi.getVelocity(msg) / 128.0f;
+				float noteGain = (Midi.getVelocity(msg) / 128.0f) * gain;
 //				System.out.println("Note gain is " + noteGain);
 				((Gain)noteGainUGen).setGain(noteGain);
 				freq.setValue(Pitch.mtof(Midi.getNote(msg)));
