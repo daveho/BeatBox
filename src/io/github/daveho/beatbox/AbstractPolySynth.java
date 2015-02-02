@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javax.sound.midi.MidiMessage;
 
 import net.beadsproject.beads.core.Bead;
+import net.beadsproject.beads.core.UGen;
 
 /**
  * Abstract base class for polysynths that receive input events and
@@ -15,7 +16,7 @@ public abstract class AbstractPolySynth extends Bead {
 	protected final Sequencer seq;
 	protected final int trackIndex;
 	protected final int maxPoly;
-	protected final Bead[] instruments;
+	protected final UGen[] instruments;
 	protected final int[] notes;
 	
 	/**
@@ -30,7 +31,7 @@ public abstract class AbstractPolySynth extends Bead {
 		this.trackIndex = trackIndex;
 		this.maxPoly = maxPoly;
 		//this.noteMap = new HashMap<>();
-		this.instruments = new Bead[maxPoly];
+		this.instruments = new UGen[maxPoly];
 		this.notes = new int[maxPoly];
 		Arrays.fill(this.notes, -1);
 	}

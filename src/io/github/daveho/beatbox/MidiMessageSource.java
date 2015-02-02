@@ -44,7 +44,7 @@ public class MidiMessageSource extends Bead implements Receiver {
 
 	@Override
 	public void send(MidiMessage message, long timeStamp) {
-		System.out.println("Received midi message!");
+//		System.out.println("Received midi message!");
 
 		boolean needSched = false;
 		
@@ -82,7 +82,7 @@ public class MidiMessageSource extends Bead implements Receiver {
 		// Atomically get and clear list of pending messages
 		List<MidiMessage> messages = pending.getAndSet(null);
 		
-		System.out.println("Dispatching " + messages.size() + " midi messages");
+//		System.out.println("Dispatching " + messages.size() + " midi messages");
 		
 		// Notify listeners for each received message.
 		// There will typically just be one, but it's definitely possible that
