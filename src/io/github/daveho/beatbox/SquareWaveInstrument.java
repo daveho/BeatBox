@@ -33,7 +33,7 @@ public class SquareWaveInstrument extends Bead /*extends UGenChain*/ {
 		
 //		System.out.println("ng.getValue() = " + ng.getValue());
 		
-		out.pause(true);
+//		out.pause(true);
 	}
 	
 	/**
