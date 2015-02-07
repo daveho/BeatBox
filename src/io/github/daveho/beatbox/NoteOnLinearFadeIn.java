@@ -3,6 +3,7 @@ package io.github.daveho.beatbox;
 import java.util.Arrays;
 
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
@@ -36,11 +37,11 @@ public class NoteOnLinearFadeIn extends UGen {
 		// Become active when a midi key down event occurs
 		if (Midi.hasMidiMessage(message)) {
 			MidiMessage msg = Midi.getMidiMessage(message);
-			if (msg.getStatus() == Midi.STATUS_KEY_DOWN) {
+			if (msg.getStatus() == ShortMessage.NOTE_ON) {
 				state = State.RISING;
 				processedSamples = 0;
 				System.out.println("Start rise");
-			} else if (msg.getStatus() == Midi.STATUS_KEY_UP) {
+			} else if (msg.getStatus() == ShortMessage.NOTE_OFF) {
 				// FIXME: abrupt cutoff
 				state = State.OFF;
 			}

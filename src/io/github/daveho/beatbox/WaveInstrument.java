@@ -1,6 +1,7 @@
 package io.github.daveho.beatbox;
 
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
@@ -60,13 +61,13 @@ public class WaveInstrument extends UGenChain {
 	//			System.out.println("noteGain is a " + noteGainUGen.getClass().getSimpleName());
 	//			System.out.println("  Its value is " + noteGainUGen.getValue());
 				
-				if (msg.getStatus() == Midi.STATUS_KEY_DOWN) {
+				if (msg.getStatus() == ShortMessage.NOTE_ON) {
 					// Start playing
 					float noteGain = (Midi.getVelocity(msg) / 128.0f) * gain;
 	//				System.out.println("Note gain is " + noteGain);
 					((Gain)noteGainUGen).setGain(noteGain);
 					freq.setValue(Pitch.mtof(Midi.getNote(msg)));
-				} else if (msg.getStatus() == Midi.STATUS_KEY_UP) {
+				} else if (msg.getStatus() == ShortMessage.NOTE_OFF) {
 					// Stop playing
 					// TODO: could set a trigger for a dynamic fade, for now just stop abruptly
 					freq.setValue(0f);

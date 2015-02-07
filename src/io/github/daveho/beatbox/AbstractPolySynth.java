@@ -3,6 +3,7 @@ package io.github.daveho.beatbox;
 import java.util.Arrays;
 
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 
 import net.beadsproject.beads.core.Bead;
 import net.beadsproject.beads.core.UGen;
@@ -46,7 +47,7 @@ public abstract class AbstractPolySynth extends Bead {
 		
 		if (Midi.hasMidiMessage(message)) {
 			MidiMessage msg = Midi.getMidiMessage(message);
-			if (msg.getStatus() == Midi.STATUS_KEY_DOWN) {
+			if (msg.getStatus() == ShortMessage.NOTE_ON) {
 				int index = findFree();
 				if (index >= 0) {
 					notes[index] = Midi.getNote(msg);
@@ -54,7 +55,7 @@ public abstract class AbstractPolySynth extends Bead {
 					instruments[index].message(message);
 					System.out.printf("Start playing note %d on instrument %d\n", notes[index], index);
 				}
-			} else if (msg.getStatus() == Midi.STATUS_KEY_UP) {
+			} else if (msg.getStatus() == ShortMessage.NOTE_OFF) {
 				int note = Midi.getNote(msg);
 				int index = findPlaying(note);
 				if (index >= 0) {

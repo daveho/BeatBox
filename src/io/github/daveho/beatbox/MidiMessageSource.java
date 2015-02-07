@@ -1,8 +1,9 @@
 package io.github.daveho.beatbox;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
@@ -16,18 +17,47 @@ import net.beadsproject.beads.core.BeadArray;
  * a MidiMessage is received.  Listeners can assume that the received
  * message will be an instance of {@link MidiMessageSource}, and
  * they should call {@link #getMessage()} on that object to get
- * the actual MidiMessage.
+ * the actual MidiMessage, and {@link #getTimeStamp()} to
+ * get the midi timestamp.  Midi timestamps should be considered
+ * to be synchronized with the AudioContext.
  */
 public class MidiMessageSource extends Bead implements Receiver {
+	private static class MidiMessageAndTimestamp {
+		final MidiMessage msg;
+		final long timeStamp;
+		public MidiMessageAndTimestamp(MidiMessage msg, long timeStamp) {
+			this.msg = msg;
+			this.timeStamp = timeStamp;
+		}
+	}
+	
 	private AudioContext ac;
 	private BeadArray listeners;
-	private AtomicReference<List<MidiMessage>> pending;
+	private double msPerFrame;
+	private volatile long frameRtStartNanos;
+	private volatile double frameTimestampMs;
+	private Object lock;
+	private LinkedList<MidiMessageAndTimestamp> received;
 	private MidiMessage message;
+	private long timestamp;
 	
 	public MidiMessageSource(AudioContext ac) {
 		this.ac = ac;
 		this.listeners = new BeadArray();
-		this.pending = new AtomicReference<>();
+		this.msPerFrame = ac.samplesToMs(ac.getBufferSize());
+		this.lock = new Object();
+		this.received = new LinkedList<>();
+		
+		// Schedule a message before every audio frame: we use this
+		// to compute timestamps for incoming MidiMessages, relative
+		// to the AudioContext's time 0, and also to dispatch received
+		// messages to listeners.
+		ac.invokeBeforeEveryFrame(new Bead() {
+			@Override
+			protected void messageReceived(Bead message) {
+				frameStart();
+			}
+		});
 	}
 	
 	/**
@@ -45,51 +75,65 @@ public class MidiMessageSource extends Bead implements Receiver {
 	@Override
 	public void send(MidiMessage message, long timeStamp) {
 //		System.out.println("Received midi message!");
-
-		boolean needSched = false;
 		
-		boolean updated;
-
-		do {
-			// Use compare and set to update the list of pending messages
-			List<MidiMessage> messages = pending.get();
+		if (timeStamp < 0L) {
+			// Real-time message!
 			
-			List<MidiMessage> update = new ArrayList<>();
-			if (messages == null) {
-				// It looks like we are adding the first pending message
-				// for the next audio frame, so schedule listeners to
-				// be notified.
-				needSched = true;
-			} else {
-				// At least one message was already pending, so listeners
-				// should already be scheduled to be notified.
-				update.addAll(messages);
-				needSched = false;
-			}
-			update.add(message);
+			// Offset of this event (occurring right now, in real time)
+			// from the beginning of the frame.
+			long rtOffsetNanos = System.nanoTime() - frameRtStartNanos;
 			
-			updated = pending.compareAndSet(messages, update);
-		} while (!updated);
-
-		if (needSched) {
-			// Schedule to have listeners notified
-			ac.invokeBeforeFrame(this);
+			// Compute a millisecond timestamp relative to the start of the
+			// current frame
+			double timeStampMs = frameTimestampMs + (rtOffsetNanos/1000000L);
+			
+			// Midi timestamp is the millisecond timestamp converted to
+			// microseconds, delayed by exactly one frame, to avoid any
+			// possibility of an event being scheduled for processing in
+			// current frame.
+			timeStamp = (long) ((timeStampMs + msPerFrame) * 1000.0);
+		}
+		
+		// Add to received list
+		synchronized (lock) {
+			received.add(new MidiMessageAndTimestamp(message, timeStamp));
 		}
 	}
-	
-	@Override
-	protected void messageReceived(Bead message) {
-		// Atomically get and clear list of pending messages
-		List<MidiMessage> messages = pending.getAndSet(null);
+
+	private void frameStart() {
+		// Update frame start timestamps
 		
-//		System.out.println("Dispatching " + messages.size() + " midi messages");
+		// Real time start of frame in nanoseconds.
+		// This is for processing realtime messages, so that they
+		// can be assigned a midi timestamp that is synchronized
+		// with the AudioContext.
+		frameRtStartNanos = System.nanoTime();
 		
-		// Notify listeners for each received message.
-		// There will typically just be one, but it's definitely possible that
-		// we could receive multiple midi messages to be processed
-		// in a single audio frame.
-		for (MidiMessage m : messages) {
-			this.message = m;
+		// AudioContext time in milliseconds.
+		frameTimestampMs = ac.getTime();
+
+		// Collect all of the messages which should be processed
+		// in this audio frame
+		List<MidiMessageAndTimestamp> toProcess = new ArrayList<>();
+		// Microsecond timestamp of end of current audio frame.
+		// Only midi messages whose timestamps are earlier than the end
+		// of this frame are scheduled for delivery.
+		double endOfFrameUs = (frameTimestampMs + msPerFrame) * 1000.0;
+		synchronized (lock) {
+			Iterator<MidiMessageAndTimestamp> i = received.iterator();
+			while (i.hasNext()) {
+				MidiMessageAndTimestamp msgAndTs = i.next();
+				if (msgAndTs.timeStamp <= endOfFrameUs) {
+					toProcess.add(msgAndTs);
+					i.remove();
+				}
+			}
+		}
+		
+		// Notify listeners for each received message/timestamp
+		for (MidiMessageAndTimestamp msgAndTs : toProcess) {
+			message = msgAndTs.msg;
+			timestamp = msgAndTs.timeStamp;
 			listeners.messageReceived(this);
 		}
 	}
@@ -101,6 +145,15 @@ public class MidiMessageSource extends Bead implements Receiver {
 	 */
 	public MidiMessage getMessage() {
 		return message;
+	}
+
+	/**
+	 * Get the microsecond timestamp of the received MidiMessage.
+	 * 
+	 * @return microsecond timestamp of the received MidiMessage
+	 */
+	public long getTimeStamp() {
+		return timestamp;
 	}
 
 	@Override
