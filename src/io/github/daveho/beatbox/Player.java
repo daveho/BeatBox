@@ -5,10 +5,11 @@ import io.github.daveho.gervill4beads.MidiMessageSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
@@ -128,9 +129,7 @@ public class Player {
 		messageSource.addMessageListener(synth);
 	}
 	
-	public void liveGervillSynth() throws MidiUnavailableException {
-		GervillUGen synth = new GervillUGen(ac, Collections.emptyMap());
-		
+	public void liveGervillSynth(GervillUGen synth, int patch) throws MidiUnavailableException, InvalidMidiDataException {
 		MidiMessageSource messageSource = new MidiMessageSource(ac);
 		final MidiDevice device = CaptureMidiEvents.getMidiInput(messageSource);
 		seq.addShutdownHook(new Runnable() {
@@ -144,6 +143,8 @@ public class Player {
 		ac.out.addInput(synth);
 		
 		messageSource.addMessageListener(synth);
+		
+		messageSource.send(new ShortMessage(ShortMessage.PROGRAM_CHANGE, patch, 0), -1);
 	}
 
 	/**

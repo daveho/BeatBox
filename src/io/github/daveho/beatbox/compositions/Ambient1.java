@@ -1,12 +1,17 @@
 package io.github.daveho.beatbox.compositions;
 
 import static io.github.daveho.beatbox.EventGroup.group;
+
+import java.util.Collections;
+
 import io.github.daveho.beatbox.EventGroup;
 import io.github.daveho.beatbox.PlaySampleEvent;
 import io.github.daveho.beatbox.Player;
 import io.github.daveho.beatbox.SampleBank;
 import io.github.daveho.beatbox.SquareWavePolySynth;
+import io.github.daveho.gervill4beads.GervillUGen;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 
 public class Ambient1 extends Player {
@@ -57,7 +62,7 @@ public class Ambient1 extends Player {
 		return 16;
 	}
 	
-	public static void main(String[] args) throws MidiUnavailableException {
+	public static void main(String[] args) throws MidiUnavailableException, InvalidMidiDataException {
 		Ambient1 composition = new Ambient1();
 		int m = 0;
 		m = composition.addBasicRhythm(m);
@@ -67,7 +72,10 @@ public class Ambient1 extends Player {
 		composition.liveSynth(synth, true);
 		*/
 		
-		composition.liveGervillSynth();
+		GervillUGen synth = new GervillUGen(composition.ac, Collections.emptyMap());
+		
+		
+		composition.liveGervillSynth(synth, 20);
 		
 		/*
 		TriangleWavePolySynth synth = new TriangleWavePolySynth(composition.seq, 0.1f, 0, 10);
