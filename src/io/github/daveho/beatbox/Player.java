@@ -1,5 +1,7 @@
 package io.github.daveho.beatbox;
 
+import io.github.daveho.gervill4beads.MidiMessageSource;
+
 import java.io.File;
 import java.io.IOException;
 

@@ -1,5 +1,7 @@
 package io.github.daveho.beatbox;
 
+import io.github.daveho.gervill4beads.Midi;
+
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
