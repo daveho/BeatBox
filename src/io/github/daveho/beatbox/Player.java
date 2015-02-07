@@ -1,9 +1,11 @@
 package io.github.daveho.beatbox;
 
+import io.github.daveho.gervill4beads.GervillUGen;
 import io.github.daveho.gervill4beads.MidiMessageSource;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
@@ -123,6 +125,24 @@ public class Player {
 				device.close();
 			}
 		});
+		messageSource.addMessageListener(synth);
+	}
+	
+	public void liveGervillSynth() throws MidiUnavailableException {
+		GervillUGen synth = new GervillUGen(ac, Collections.emptyMap());
+		
+		MidiMessageSource messageSource = new MidiMessageSource(ac);
+		final MidiDevice device = CaptureMidiEvents.getMidiInput(messageSource);
+		seq.addShutdownHook(new Runnable() {
+			@Override
+			public void run() {
+				System.out.println("Done, shutting down midi device");
+				device.close();
+			}
+		});
+		
+		ac.out.addInput(synth);
+		
 		messageSource.addMessageListener(synth);
 	}
 
