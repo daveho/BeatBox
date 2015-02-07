@@ -3,10 +3,8 @@ package io.github.daveho.beatbox.compositions;
 import static io.github.daveho.beatbox.EventGroup.group;
 import io.github.daveho.beatbox.EventGroup;
 import io.github.daveho.beatbox.PlaySampleEvent;
-import io.github.daveho.beatbox.PlaySquareWaveEvent;
 import io.github.daveho.beatbox.Player;
 import io.github.daveho.beatbox.SampleBank;
-import io.github.daveho.beatbox.SequencerEvent;
 import io.github.daveho.beatbox.SquareWavePolySynth;
 
 import javax.sound.midi.MidiUnavailableException;
@@ -108,11 +106,6 @@ public class BeatBox extends Player {
 		g_claps1 = group(12, clap1, 14, clap1);
 		g_boings1 = group(0, boing1);
 	}
-
-
-	SequencerEvent oneBeatSquareWave(float freq) {
-		return new PlaySquareWaveEvent(BEAT_LEN_MS, freq, 0.1f);
-	}
 	
 	int addRhythm(int m) {
 		int start = m*BPM;
@@ -159,16 +152,6 @@ public class BeatBox extends Player {
 		int start = m*BPM;
 		seq.atBeats(0, start+0, 4, BPM, g_kicks2);
 		seq.atBeats(0, start+0, 4, BPM, g_claps1);
-		return m+4;
-	}
-	
-	int addSquareWavePattern(int m) {
-		int start = m*BPM;
-		seq.atBeats(0, start+0, 4, BPM, g_kicks2);
-		seq.atBeats(0, start+4, 4, BPM, oneBeatSquareWave(440.0f));
-		seq.atBeats(0, start+6, 4, BPM, oneBeatSquareWave(440.0f));
-		seq.atBeats(0, start+12, 4, BPM, oneBeatSquareWave(440.0f));
-		seq.atBeats(0, start+14, 4, BPM, oneBeatSquareWave(440.0f));
 		return m+4;
 	}
 	
