@@ -13,6 +13,7 @@ import javax.sound.midi.ShortMessage;
 
 import net.beadsproject.beads.core.AudioContext;
 import net.beadsproject.beads.core.Bead;
+import net.beadsproject.beads.core.UGen;
 import net.beadsproject.beads.ugens.Clock;
 import net.beadsproject.beads.ugens.Gain;
 import net.beadsproject.beads.ugens.RecordToFile;
@@ -129,7 +130,7 @@ public class Player {
 		messageSource.addMessageListener(synth);
 	}
 	
-	public void liveGervillSynth(GervillUGen synth, int patch) throws MidiUnavailableException, InvalidMidiDataException {
+	public MidiMessageSource liveGervillSynth(UGen synth, int patch) throws MidiUnavailableException, InvalidMidiDataException {
 		MidiMessageSource messageSource = new MidiMessageSource(ac);
 		final MidiDevice device = CaptureMidiEvents.getMidiInput(messageSource);
 		seq.addShutdownHook(new Runnable() {
@@ -145,6 +146,8 @@ public class Player {
 		messageSource.addMessageListener(synth);
 		
 		messageSource.send(new ShortMessage(ShortMessage.PROGRAM_CHANGE, patch, 0), -1);
+		
+		return messageSource;
 	}
 
 	/**
