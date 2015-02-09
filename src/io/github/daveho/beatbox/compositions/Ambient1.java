@@ -1,27 +1,26 @@
 package io.github.daveho.beatbox.compositions;
 
 import static io.github.daveho.beatbox.EventGroup.group;
-
-import java.util.Collections;
-
 import io.github.daveho.beatbox.EventGroup;
 import io.github.daveho.beatbox.PlaySampleEvent;
 import io.github.daveho.beatbox.Player;
 import io.github.daveho.beatbox.SampleBank;
-import io.github.daveho.beatbox.SquareWavePolySynth;
 import io.github.daveho.gervill4beads.GervillUGen;
+
+import java.util.Collections;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 
 public class Ambient1 extends Player {
-	static final int BPM = 16;
+	static final int BPM = 12;
 	static final float MEASURE_LEN_MS = 1100.0f;
 	static final int NUM_TRACKS = 1;
 
 	// Samples
 	static PlaySampleEvent s_hihat2 = new PlaySampleEvent(Samples.HIHAT_2, 0.2f);
 	static PlaySampleEvent s_hihat3 = new PlaySampleEvent(Samples.HIHAT_3, 0.2f);
+	static PlaySampleEvent s_kick = new PlaySampleEvent(Samples.KICK_1, 0.2f);
 	
 	// Measure patterns
 	static EventGroup g_basicHihats; // actually a double-measure pattern
@@ -34,20 +33,22 @@ public class Ambient1 extends Player {
 		
 		g_basicHihats = group(
 				0, s_hihat3,
+				2, s_hihat3,
 				4, s_hihat3,
+				6, s_hihat3,
 				8, s_hihat3,
-				10, s_hihat2,
+				10, s_hihat3,
 				12, s_hihat2,
-				14, s_hihat2,
+				14, s_hihat3,
 				16, s_hihat2,
-				24, s_hihat3,
-				26, s_hihat3,
-				28, s_hihat3
+				18, s_hihat3,
+				20, s_hihat3,
+				22, s_hihat3
 		);
 	}
 
 	int addBasicRhythm(int m) {
-		for (; m < 8; m++) {
+		for (; m < 24; m++) {
 			seq.atBeat(0, m*BPM*2, g_basicHihats);
 		}
 		return 16;
