@@ -55,6 +55,7 @@ public class MidiIO {
 	}
 	
 	private static MidiMessageAndTimeStamp fromString(String s) throws InvalidMidiDataException {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(new StringReader(s));
 		long timeStamp = in.nextLong();
 		String messageType = in.next();
