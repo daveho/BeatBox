@@ -2,6 +2,7 @@ package io.github.daveho.beatbox;
 
 import io.github.daveho.gervill4beads.GervillUGen;
 import io.github.daveho.gervill4beads.MidiMessageSource;
+import io.github.daveho.gervill4beads.ReceivedMidiMessageSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,7 +119,7 @@ public class Player {
 	 * @throws MidiUnavailableException
 	 */
 	public void liveSynth(Bead synth, boolean record) throws MidiUnavailableException {
-		MidiMessageSource messageSource = new MidiMessageSource(ac);
+		ReceivedMidiMessageSource messageSource = new ReceivedMidiMessageSource(ac);
 		final MidiDevice device = CaptureMidiEvents.getMidiInput(messageSource);
 		seq.addShutdownHook(new Runnable() {
 			@Override
@@ -131,7 +132,7 @@ public class Player {
 	}
 	
 	public MidiMessageSource liveGervillSynth(UGen synth, int patch) throws MidiUnavailableException, InvalidMidiDataException {
-		MidiMessageSource messageSource = new MidiMessageSource(ac);
+		ReceivedMidiMessageSource messageSource = new ReceivedMidiMessageSource(ac);
 		final MidiDevice device = CaptureMidiEvents.getMidiInput(messageSource);
 		seq.addShutdownHook(new Runnable() {
 			@Override
